@@ -1,0 +1,11 @@
+type Message {
+  id: ID!
+  content: String!
+  author: UserDto!
+  chatroom_id: ID!
+}
+
+input NewMessageInput {
+  content: String!
+  author: String
+}

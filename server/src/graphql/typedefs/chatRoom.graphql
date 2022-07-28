@@ -1,0 +1,24 @@
+type ChatRoom {
+  id: ID!
+  name: String!
+  type: ChatRoomTypes!
+  creator_id: ID!
+  messages: [Message]!
+  users: [UserDto]!
+  creator: UserDto!
+}
+
+input CreateChatroomGroupInput {
+  name: String!
+  type: ChatRoomTypes
+}
+
+input AddChatRoomGroupMembersInput {
+  id: ID
+  username: String!
+}
+
+input RemoveChatRoomGroupMemberInput {
+  id: ID
+  username: String!
+}

@@ -1,0 +1,33 @@
+interface IAuthResponse {
+  status: Status!
+  token: String!
+
+  # response:{
+  #   data:{
+  #     token:String!
+  #   }
+  # }
+}
+type AuthResponse implements IAuthResponse {
+  status: Status!
+  token: String!
+  # response:{
+  # data:{
+  #   token:String!
+  #   }
+  # }
+}
+
+type GenericResponse {
+  status: Status!
+  message: String
+}
+
+enum Status {
+  ERROR
+  SUCCESS
+}
+enum ChatRoomTypes {
+  ONE_TO_ONE
+  MANY_TO_MANY
+}

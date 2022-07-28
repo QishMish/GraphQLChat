@@ -1,0 +1,25 @@
+type User {
+  id: ID!
+  email: String!
+  username: String!
+  password: String!
+}
+input SignUpUserInput {
+  email: String!
+  username: String!
+  password: String!
+}
+input SignInUserInput {
+  username: String!
+  password: String!
+}
+input UpdateUserInput {
+  email: String!
+  username: String!
+  password: String!
+}
+type UserDto {
+  id: ID!
+  email: String!
+  username: String!
+}

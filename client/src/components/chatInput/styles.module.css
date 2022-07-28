@@ -1,0 +1,45 @@
+.chatInputContainer{
+    background-color: #ffffff;
+    width: 100%;
+    border-radius: 50px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.chatInput{
+    background-color: #ffffff !important;
+    position: relative;
+    width: 90%;
+}
+.leftControl{
+    position: absolute;
+    top: 50%;
+    left: 2%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+.rightControl{
+    position: absolute;
+    top: 50%;
+    right: 2%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+.fileIcon{
+    font-size: 30px;
+    color: #102D5B;
+    cursor: pointer;
+}
+.emojiIcon{
+    font-size: 30px;
+    color: #102D5B;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.sendIcon{
+    color: #102D5B;
+    font-size: 30px;
+    cursor: pointer;
+}

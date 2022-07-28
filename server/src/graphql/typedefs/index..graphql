@@ -1,0 +1,49 @@
+type Query {
+  #user
+  getUsers: [User]!
+  getUserById(userId: ID!): User
+  getUserByUsername(username: String!): User
+
+  #chat
+  fetchChatrooms: [ChatRoom]!
+  fetchChatroomMessages(chatroomId: ID!): ChatRoom!
+
+  #admin
+  # getAllUsers
+  # getUserById
+  # getUserByUserName
+}
+type Mutation {
+  #user
+  signUpUser(signUpUserInput: SignUpUserInput!): AuthResponse
+  signInUser(signInUserInput: SignInUserInput!): AuthResponse
+  updateUser(userId: ID!, updateUserInput: UpdateUserInput!): User
+  deleteUser(userId: ID!): User
+
+  #chat
+  sendNewMessage(chatroomId: ID!, newMessageInput: NewMessageInput!): Message!
+  deleteMessage(messageId: ID!): GenericResponse!
+  createChatroomGroup(
+    userId: ID!
+    createChatroomGroupInput: CreateChatroomGroupInput!
+  ): ChatRoom!
+  addChatRoomGroupMembers(
+    userId: ID!
+    chatroomId: ID!
+    addChatRoomGroupMembersInput: [AddChatRoomGroupMembersInput!]!
+  ): GenericResponse!
+
+  removeChatRoomGroupMembers(
+    userId: ID!
+    chatroomId: ID!
+    removeChatRoomGroupMemberInput: [RemoveChatRoomGroupMemberInput!]!
+  ): GenericResponse!
+  deleteChatroomGroup(userId: ID!, chatroomId: ID!): GenericResponse!
+  #admin
+  # disableUser
+  # deleteMessage
+  # sendMessage
+}
+# type Subscription {
+#   onMessageCreated: [Message]
+# }

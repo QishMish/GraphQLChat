@@ -1,0 +1,112 @@
+.chatSidebar{
+    max-width: 450px;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding:0  20px 20px 20px;
+}
+.wrapper{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 100%;
+}
+.chatSidebarBody{
+    background-color: #ffffff;
+    border-radius: 40px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+.search{
+    position: relative;
+    width: 90%;
+    max-width: 360px;
+    padding: 30px 0;
+}
+.searchInput{
+    border-radius: 20px;
+    padding: 3px 2px;
+    background-color: #F0F4F8;
+    height: 50px;
+    width: 100%;
+}
+.searchIcon{
+    color: #102D5B;
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    right: 4%;
+    transform: translateY(-50%);
+}
+.conversations{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    gap:15px
+}
+.conversation{
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    padding: 2px 3px;
+    cursor: pointer;
+ }
+ .avatar{
+    width: 50px;
+    height: 50px;
+ }
+ .left{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+.center{
+    flex: 2;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+}
+.center h3{
+    color: #102D5B;
+}
+.center span{
+    color: #102D5B;
+}
+.right{
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    justify-content: center;
+    gap:5px
+} 
+
+.lastMessageSentTime{
+    color: #102D5B;
+}
+.unSeenMessages{
+    color: #ffffff;
+    background-color: #FE5366;
+    padding: 3px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 15px;
+}
+.none{
+    opacity: 0;
+}
