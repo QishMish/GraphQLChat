@@ -22,4 +22,7 @@ type UserDto {
   id: ID!
   email: String!
   username: String!
+  roles: [Roles!]!
+  verified:Boolean!
+  isActive:Boolean!
 }

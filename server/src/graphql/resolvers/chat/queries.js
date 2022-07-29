@@ -6,7 +6,9 @@ const chatQueries = {
     return usersResponse.response;
   },
   fetchChatroomMessages: async (parent, args, ctx) => {
-    const usersResponse = await chatService.fetchChatroomMessages();
+    const { id: userId } = ctx.user;
+    const { chatroomId } = args;
+    const usersResponse = await chatService.fetchChatroomMessages(chatroomId);
     return usersResponse.response;
   },
 };

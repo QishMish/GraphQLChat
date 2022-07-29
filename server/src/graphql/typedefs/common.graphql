@@ -1,7 +1,7 @@
 interface IAuthResponse {
   status: Status!
-  token: String!
-
+  access_token:String!
+  refresh_token:String
   # response:{
   #   data:{
   #     token:String!
@@ -10,7 +10,8 @@ interface IAuthResponse {
 }
 type AuthResponse implements IAuthResponse {
   status: Status!
-  token: String!
+  access_token:String!
+  refresh_token:String
   # response:{
   # data:{
   #   token:String!
@@ -30,4 +31,10 @@ enum Status {
 enum ChatRoomTypes {
   ONE_TO_ONE
   MANY_TO_MANY
+}
+
+enum Roles {
+  ADMIN
+  MODERATOR
+  USER
 }

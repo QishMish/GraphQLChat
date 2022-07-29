@@ -4,6 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import Loading from "../loading/Index";
 
+import useSignIn from '../../hooks/useSignIn'
+
 import styles from "./styles.module.css";
 
 const SignIn = () => {
@@ -12,13 +14,29 @@ const SignIn = () => {
 
   const isLoading = false;
 
+  const [signIn, { data, loading, error }] = useSignIn()
+
+  const signInHandler = async(e)=>{
+    e.preventDefault()
+    await signIn({
+      variables : {
+        signInUserInput:{
+          username:"mike",
+          password:"mike"
+        }
+      }
+    })
+    console.log(data);
+  }
+
+
   return (
     <>
       {isLoading ? (
         <Loading />
       ) : (
         <div className={styles.signin}>
-          <form className={styles.form}>
+          <form className={styles.form} onSubmit={signInHandler}>
             <h1>Sign In</h1>
             <div className={styles.input}>
               <label>

@@ -1,6 +1,6 @@
-const { User, Chatroom, UserChatroom, Message } = require('../models');
-const { Op } = require('sequelize');
-const { getMethods } = require('../utils/helper');
+const { User, Chatroom, UserChatroom, Message } = require("../models");
+const { Op } = require("sequelize");
+const { getMethods } = require("../utils/helper");
 const {
   UserInputError,
   AuthenticationError,
@@ -8,58 +8,74 @@ const {
   withFilter,
   SyntaxError,
   ValidationError,
-} = require('apollo-server');
-const { ResourceNotFoundError } = require('../errors/ApiError');
+} = require("apollo-server");
+const { ResourceNotFoundError } = require("../errors/ApiError");
 
-const fetchChatrooms = async userId => {
+const fetchChatrooms = async (userId) => {
   const chatrooms = await Chatroom.findAll({
     include: [
       {
         model: User,
-        as: 'creator',
+        as: "creator",
       },
       {
         model: Message,
-        as: 'messages',
+        as: "messages",
         include: {
           model: User,
-          as: 'author',
+          as: "author",
         },
       },
       {
         model: User,
-        as: 'users',
+        as: "users",
         // chatroom_id: 1,
       },
     ],
   });
 
   return {
-    status: 'SUCCESS',
+    status: "SUCCESS",
     response: chatrooms,
   };
 };
-const fetchChatroomMessages = async chatroomId => {
+const fetchChatroomMessages = async (chatroomId) => {
   const chatRoom = await Chatroom.findOne({
     where: {
-      id: 1,
+      id: chatroomId,
     },
     include: [
       {
         model: Message,
-        as: 'messages',
+        as: "messages",
         include: [
           {
             model: User,
-            as: 'author',
+            as: "author",
           },
         ],
       },
     ],
   });
   return {
-    status: 'SUCCESS',
+    status: "SUCCESS",
     response: chatRoom,
+  };
+};
+const fetchChatRoomUsers = async (chatroomId) => {
+  const chatroom = await Chatroom.findOne({
+    where: {
+      id: chatroomId,
+    },
+    include: [
+      {
+        model: User,
+        as: "users",
+      },
+    ],
+  });
+  return {
+    users: chatroom.users,
   };
 };
 const sendNewMessage = async (userId, chatroomId, newMessageInput) => {
@@ -69,7 +85,7 @@ const sendNewMessage = async (userId, chatroomId, newMessageInput) => {
     },
   });
 
-  if (!user) throw new ResourceNotFoundError('User not found');
+  if (!user) throw new ResourceNotFoundError("User not found");
 
   const message = await Message.create({
     content: newMessageInput.content,
@@ -86,17 +102,17 @@ const deleteMessage = async (userId, messageId) => {
 
   if (!message)
     throw new UserInputError(
-      'Incorrect message id or user not allowed for delete action'
+      "Incorrect message id or user not allowed for delete action"
     );
 
-  message.content = 'Message removed';
+  message.content = "Message removed";
 
   await message.save();
 
   return message;
 };
 const createChatroomGroup = async (userId, createChatroomGroupInput) => {
-  const { name, type = 'MANY_TO_MANY' } = createChatroomGroupInput;
+  const { name, type = "MANY_TO_MANY" } = createChatroomGroupInput;
   const user = await User.findOne({
     where: {
       id: userId,
@@ -121,7 +137,7 @@ const addChatRoomGroupMembers = async (userId, chatroomId, members) => {
     },
   });
 
-  if (!chatRoom) throw new UserInputError('Invalid creator id or chatroomId');
+  if (!chatRoom) throw new UserInputError("Invalid creator id or chatroomId");
 
   await Promise.all(
     members.map(async ({ id, username }) => {
@@ -149,7 +165,7 @@ const removeChatRoomGroupMembers = async (userId, chatroomId, members) => {
     },
   });
 
-  if (!chatRoom) throw new UserInputError('Invalid creator id or chatroomId');
+  if (!chatRoom) throw new UserInputError("Invalid creator id or chatroomId");
 
   await Promise.all(
     members.map(async ({ id, username }) => {
@@ -174,6 +190,40 @@ const deleteChatroomGroup = async (userId, chatroomId) => {
     where: { id: chatroomId, creator_id: userId },
   });
 };
+const sendChatMessageFromAdministration = async (
+  userId,
+  chatroomId,
+  newMessageInput
+) => {
+  const user = await User.findOne({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) throw new ResourceNotFoundError("User not found");
+
+  const message = await Message.create({
+    content: newMessageInput.content,
+    author_id: user.id,
+    chatroom_id: chatroomId,
+  });
+  return message;
+};
+const removeMessage = async (messageId) => {
+  const message = await Message.findOne({
+    id: messageId,
+  });
+
+  if (!message) throw new UserInputError("Incorrect message id");
+
+  message.content =
+    "message removed because it violates our Community Standards";
+
+  await message.save();
+
+  return message;
+};
 
 module.exports = {
   fetchChatrooms,
@@ -184,4 +234,7 @@ module.exports = {
   addChatRoomGroupMembers,
   removeChatRoomGroupMembers,
   deleteChatroomGroup,
+  sendChatMessageFromAdministration,
+  removeMessage,
+  fetchChatRoomUsers,
 };

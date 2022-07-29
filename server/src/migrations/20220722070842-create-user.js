@@ -23,8 +23,12 @@ module.exports = {
       },
       verified: {
         type: Sequelize.BOOLEAN,
-        allowNull: false,
         defaultValue: false,
+        allowNull: false,
+      },
+      isActive:{
+        type:Sequelize.BOOLEAN,
+        defaultValue:true
       },
       createdAt: {
         allowNull: false,
