@@ -1,8 +1,8 @@
 type Query {
   #user
-  getUsers: [User]!
-  getUserById(userId: ID!): User
-  getUserByUsername(username: String!): User
+  getUsers: [UserDto]!
+  getUserById(userId: ID!): UserDto
+  getUserByUsername(username: String!): UserDto
 
   #chat
   fetchChatrooms: [ChatRoom]!
@@ -17,8 +17,8 @@ type Mutation {
   #user
   signUpUser(signUpUserInput: SignUpUserInput!): AuthResponse
   signInUser(signInUserInput: SignInUserInput!): AuthResponse
-  updateUser(userId: ID!, updateUserInput: UpdateUserInput!): User
-  deleteUser(userId: ID!): User
+  updateUser(userId: ID!, updateUserInput: UpdateUserInput!): UserDto
+  deleteUser(userId: ID!): UserDto
 
   #chat
   sendNewMessage(chatroomId: ID!, newMessageInput: NewMessageInput!): Message!

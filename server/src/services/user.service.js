@@ -2,7 +2,9 @@ const { User, sequelize } = require('../models');
 const { ResourceNotFoundError } = require('../errors/ApiError');
 
 const getAll = async () => {
-  const users = await User.findAll();
+  const users = await User.findAll({
+    attributes: ['id', 'email', 'username'],
+  });
   return {
     users: users,
   };
@@ -14,6 +16,8 @@ const getUserById = async userId => {
     },
   });
   if (!user) throw new ResourceNotFoundError('User not found');
+
+  delete user.password;
 
   return {
     user: user,
@@ -31,6 +35,8 @@ const getUserByUserName = async username => {
   });
 
   if (!user) throw new ResourceNotFoundError('User not found');
+
+  delete user.password;
 
   return {
     user: user,
@@ -53,6 +59,8 @@ const updateUser = async (userId, fields) => {
   });
 
   await user.save();
+
+  delete user.password;
 
   return {
     user: user,
