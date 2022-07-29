@@ -21,11 +21,15 @@ const fetchChatrooms = async userId => {
       {
         model: Message,
         as: 'messages',
+        include: {
+          model: User,
+          as: 'author',
+        },
       },
       {
         model: User,
         as: 'users',
-        chatroom_id: 1,
+        // chatroom_id: 1,
       },
     ],
   });
@@ -105,8 +109,6 @@ const createChatroomGroup = async (userId, createChatroomGroupInput) => {
     creator_id: userId,
   });
 
-  console.log(getMethods(user));
-
   await user.addChatrooms(chatroomGroup);
 
   return chatroomGroup;
@@ -123,7 +125,6 @@ const addChatRoomGroupMembers = async (userId, chatroomId, members) => {
 
   await Promise.all(
     members.map(async ({ id, username }) => {
-      console.log({ id, username });
       const param = id
         ? {
             id,
