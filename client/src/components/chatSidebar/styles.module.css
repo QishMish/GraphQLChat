@@ -88,8 +88,12 @@
     gap: 5px;
 }
 
-.center h3 {
+.center h4 {
     color: #102D5B;
+    padding-right: 5px;
+}
+.users{
+    display: flex;
 }
 
 .center span {

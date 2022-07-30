@@ -39,15 +39,16 @@
     background-color: #ffffff;
     padding: 12px;
     border-radius: 15px;
-    min-width: 70px;
+    min-width: 80px;
     color: #10182B;
+    line-height: 22px;
 }
 .time{
     /* display: flex;
     justify-content: end; */
     position: absolute;
     right: 5px;
-    bottom: -20px;
-    font-size: 13px;
+    bottom: -12px;
+    font-size: 11px;
     color: #10182B;
 }

@@ -1,26 +1,20 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");  
+const bcrypt = require("bcrypt");
 const { JWT_ACCESS_TOKEN_KEY } = require("../config/constants");
 
-const signJwt = async (payload, secret) => {
+const signJwt = async (payload, secret, { expiresIn }) => {
   var token = await jwt.sign(payload, secret, {
-    expiresIn: "7d",
+    expiresIn,
   });
   return token;
 };
 
 const verifyJwt = async (token, secret) => {
-  // console.log("yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluIiwidXNlcm5hbWUiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE2NTg3MzM4OTcsImV4cCI6MTY1OTMzODY5N30.jP4GsyrRFgSVJl1QgSVKRuJ7fPMWQgZ7WFtmn1lsJFw");
-  // console.log(token)
-  // console.log(JWT_ACCESS_TOKEN_KEY)
-  // console.log(secret)
-
   try {
     const decoded = await jwt.verify(token, secret);
-    console.log(decoded);
+    console.log(decoded)
     return decoded;
   } catch (error) {
-    console.log(error);
     return null;
   }
 };

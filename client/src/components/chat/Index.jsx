@@ -6,13 +6,13 @@ import ChatInput from '../chatInput/Index'
 import styles from './styeles.module.css'
 
 const Chat = () => {
-    return (
-        <div className={styles.chatComponentContainer}>
-            <ChatHeader />
-            <ChatBody />
-            <ChatInput />
-        </div>
-    )
+	return (
+		<div className={styles.chatComponentContainer}>
+			<ChatHeader />
+			<ChatBody />
+			<ChatInput />
+		</div>
+	)
 }
 
 export default Chat

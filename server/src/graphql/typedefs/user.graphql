@@ -7,6 +7,8 @@ type User {
 input SignUpUserInput {
   email: String!
   username: String!
+  firstname: String!
+  lastname: String!
   password: String!
 }
 input SignInUserInput {
@@ -22,4 +24,7 @@ type UserDto {
   id: ID!
   email: String!
   username: String!
+  roles: [Roles!]!
+  verified:Boolean!
+  isActive:Boolean!
 }

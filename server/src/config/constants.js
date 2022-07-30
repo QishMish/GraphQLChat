@@ -1,10 +1,12 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const {
   PORT,
   NODE_ENV,
   JWT_ACCESS_TOKEN_KEY,
   JWT_REFRESH_TOKEN_KEY,
+  JWT_ACCESS_TOKEN_EXPIRES_IN,
+  JWT_REFRESH_TOKEN_EXPIRES_IN,
   DB_NAME,
   DB_PORT,
   DB_USERNAME,
@@ -12,12 +14,13 @@ const {
   DB_HOST,
 } = process.env;
 
-
 module.exports = {
   PORT,
   NODE_ENV,
   JWT_ACCESS_TOKEN_KEY,
   JWT_REFRESH_TOKEN_KEY,
+  JWT_ACCESS_TOKEN_EXPIRES_IN,
+  JWT_REFRESH_TOKEN_EXPIRES_IN,
   DB_NAME,
   DB_PORT,
   DB_USERNAME,
