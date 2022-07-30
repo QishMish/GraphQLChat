@@ -1,8 +1,10 @@
+
 type Message {
   id: ID!
   content: String!
   author: UserDto!
   chatroom_id: ID!
+  createdAt: String!
 }
 
 input NewMessageInput {

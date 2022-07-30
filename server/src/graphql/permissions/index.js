@@ -1,11 +1,11 @@
 const { shield, and, or } = require('graphql-shield')
 const {isAdmin, isAuthenticated, isModerator} = require ('./rules')
 
-
 const permissions = shield({
   Query: {
     //user
-    getUsers:and(isAuthenticated, ),
+    me:isAuthenticated,
+    getUsers:and(isAuthenticated, or(isAdmin, isModerator)),
     getUserById:and(isAuthenticated, or(isAdmin, isModerator)),
     getUserByUsername:isAuthenticated,
     //chat

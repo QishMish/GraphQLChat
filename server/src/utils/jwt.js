@@ -12,6 +12,7 @@ const signJwt = async (payload, secret, { expiresIn }) => {
 const verifyJwt = async (token, secret) => {
   try {
     const decoded = await jwt.verify(token, secret);
+    console.log(decoded)
     return decoded;
   } catch (error) {
     return null;

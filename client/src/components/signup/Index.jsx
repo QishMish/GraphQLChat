@@ -1,81 +1,136 @@
 import React from "react";
 
+import { SIGN_UP_USER } from '../../graphql/auth.js'
+
+import { useMutation } from '@apollo/client';
+
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import useSignUp from '../../hooks/useSignIn'
+import { useForm } from "react-hook-form";
 
 import styles from "./styles.module.css";
+import { isValidEmail } from "../../utils/helper.js";
+import Loading from "../loading/Index.jsx";
+import { useAuthContext } from "../../context";
+
+
 
 const SignUp = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [signUp, { data, loading, error }] = useSignUp()
+  const { onSignUp } = useAuthContext()
 
-  const signUpHandler = async(e)=>{
-    e.preventDefault()
+  const [signUp, { data, loading, error }] = useMutation(SIGN_UP_USER, {
+    onCompleted: (data) => {
+      console.log(data);
+      localStorage.setItem("access_token", data.signUpUser.access_token)
+      localStorage.setItem("refresh_token", data.signUpUser.refresh_token)
+      onSignUp(data.signUpUser.access_token)
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
+
+
+  const { register, handleSubmit, errors } = useForm({
+    defaultValues: {
+      email: "",
+      firstname: "",
+      lastname: "",
+      username: "",
+      password: "",
+    }
+  });
+
+  const signUpHandler = async (data) => {
+    console.log(data);
+
     await signUp({
-      variables : {
-        signUpUserInput:{
-          email:"misho@gmail.com",
-          username:"mike",
-          password:"mike"
-        }
+      variables: {
+        signUpUserInput: data
       }
     })
-    console.log(data);
+    console.log("success register");
   }
+  const handleEmailValidation = email => {
+    console.log("ValidateEmail was called with", email);
+    const isValid = isValidEmail(email);
+    const validityChanged =
+      (errors?.email && isValid) || (!errors?.email && !isValid);
+
+    if (validityChanged) console.log("Fire tracker with", isValid ? "Valid" : "Invalid");
+    return isValid;
+  };
+
   return (
-    <div className={styles.signin}>
-      <form className={styles.form} onSubmit={signUpHandler}>
-        <h1>Sign Up</h1>
-        <div className={styles.input}>
-          <label>
-            <input
-              type="text"
-              placeholder="firstname"
-            />
-          </label>
+
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className={styles.signin}>
+          <form className={styles.form} onSubmit={handleSubmit(signUpHandler)}>
+            <h1>Sign Up</h1>
+            <div className={styles.input}>
+              <label>
+                <input
+                  type="text"
+                  placeholder="firstname"
+                  {...register("firstname", { required: "Firstname is required", minLength: 3, maxLength: 30 })}
+                />
+              </label>
+            </div>
+            <div className={styles.input}>
+              <label>
+                <input
+                  type="text"
+                  placeholder="lastname"
+                  {...register("lastname", { required: "Lastname is required", minLength: 3, maxLength: 30 })}
+                />
+              </label>
+            </div>
+            <div className={styles.input}>
+              <label>
+                <input
+                  type="email"
+                  placeholder="email@gmail.com"
+                  {...register("email", { required: "Email address is required", })}
+                />
+              </label>
+            </div>
+            <div className={styles.input}>
+              <label>
+                <input
+                  type="text"
+                  placeholder="username"
+                  {...register("username", { required: "Username is required", minLength: 3, maxLength: 30 })}
+                />
+              </label>
+            </div>
+            <div className={styles.input}>
+              <label>
+                <input
+                  type="password"
+                  placeholder="******************"
+                  {...register("password", { required: "Password is required", minLength: 3 })}
+                />
+              </label>
+            </div>
+            <input type="submit" value="Sign Up" />
+            <p>
+              Not a member yet?
+              <Link to="/signin"> Sign In</Link>
+            </p>
+          </form>
         </div>
-        <div className={styles.input}>
-          <label>
-            <input
-              type="text"
-              placeholder="lastname"
-            />
-          </label>
-        </div>
-        <div className={styles.input}>
-          <label>
-            <input
-              type="email"
-              placeholder="email@gmail.com"
-            />
-          </label>
-        </div>
-        <div className={styles.input}>
-          <label>
-            <input
-              type="text"
-              placeholder="username"
-            />
-          </label>
-        </div>
-        <div className={styles.input}>
-          <label>
-            <input
-              type="password"
-              placeholder="******************"
-            />
-          </label>
-        </div>
-        <input type="submit" value="Sign Up" />
-        <p>
-          Not a member yet?
-          <Link to="/signin"> Sign In</Link>
-        </p>
-      </form>
-    </div>
+      )
+      }
+    </>
+
+
   );
 };
 

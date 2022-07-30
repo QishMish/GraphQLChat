@@ -23,5 +23,4 @@ const schema = applyMiddleware(
   // permissions
 );
 
-
 module.exports = schema;

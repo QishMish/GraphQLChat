@@ -11,7 +11,7 @@ app.use(cookieParser());
   await graphqlServer.start();
   graphqlServer.applyMiddleware({
     app,
-    authMiddleware,
+    // authMiddleware,
   });
 })();
 

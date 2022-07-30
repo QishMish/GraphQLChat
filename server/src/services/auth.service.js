@@ -18,9 +18,11 @@ const { getMethods } = require("../utils/helper");
 
 const { ResourceNotFoundError } = require("../errors/ApiError");
 
-const signUp = async (email, username, password) => {
+const signUp = async (email, username, firstname, lastname, password) => {
   const user = await User.create({
     email: email,
+    firstname: firstname,
+    lastname: lastname,
     username: username,
     password: password,
   });
@@ -72,8 +74,6 @@ const signIn = async (username, password) => {
   }
   const { access_token, refresh_token } = await signTokens(user);
 
-  console.log(refresh_token);
-
   const refreshToken = await RefreshToken.create({
     refresh_token: refresh_token,
     owner_id: user.id,
@@ -101,12 +101,14 @@ const signOut = async (userId, token) => {
   };
 };
 const refreshAccessToken = async (refreshToken) => {
-  const decoded = await verifyJwt(refreshToken, JWT_REFRESH_TOKEN_KEY);
-
+  const decoded = await verifyJwt(
+    refreshToken,
+    JWT_REFRESH_TOKEN_KEY
+  );
   if (!decoded) throw new ForbiddenError("Could not refresh access token");
 
   const token = await RefreshToken.findOne({
-    refresh_token: token,
+    refresh_token: refreshToken,
   });
 
   if (!token) throw new ForbiddenError("Refresh token not found");
@@ -128,7 +130,9 @@ const refreshAccessToken = async (refreshToken) => {
   });
 
   const found = user?.refreshTokens.some(
-    (refreshToken) => refreshToken.refresh_token === token
+    (rfToken) => {
+      return rfToken.refresh_token === refreshToken
+    }
   );
 
   if (!found) throw new ForbiddenError("Invalid refresh token");
@@ -144,7 +148,7 @@ const refreshAccessToken = async (refreshToken) => {
     },
     JWT_ACCESS_TOKEN_KEY,
     {
-      expiresIn: JWT_ACCESS_TOKEN_EXPIRES_IN * 60 * 1000,
+      expiresIn: "1m",
     }
   );
 
@@ -156,6 +160,8 @@ const refreshAccessToken = async (refreshToken) => {
 const signTokens = async (user) => {
   const roles = user.roles ? user.roles.map((role) => role.role) : ["USER"];
   // Create access token
+  console.log(JWT_ACCESS_TOKEN_EXPIRES_IN * 60 * 1000);
+  console.log(JWT_REFRESH_TOKEN_EXPIRES_IN * 60 * 1000);
   const access_token = await signJwt(
     {
       id: user.id,
@@ -167,7 +173,8 @@ const signTokens = async (user) => {
     },
     JWT_ACCESS_TOKEN_KEY,
     {
-      expiresIn: JWT_ACCESS_TOKEN_EXPIRES_IN * 60 * 1000,
+      // expiresIn: JWT_ACCESS_TOKEN_EXPIRES_IN * 60 * 1000,
+      expiresIn: "30m",
     }
   );
 
@@ -183,7 +190,8 @@ const signTokens = async (user) => {
     },
     JWT_REFRESH_TOKEN_KEY,
     {
-      expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN * 60 * 1000,
+      // expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN * 60 * 1000,
+      expiresIn: "7d",
     }
   );
 

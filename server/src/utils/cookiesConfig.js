@@ -4,8 +4,8 @@ const {
 } = require("../config/constants");
 
 const cookieOptions = {
-  httpOnly: true,
-  sameSite: "none",
+  // httpOnly: true,
+  // sameSite: "none",
   secure: false,
 };
 
