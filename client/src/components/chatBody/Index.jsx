@@ -1,10 +1,10 @@
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useQuery, useLazyQuery, useSubscription } from '@apollo/client';
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import { useAuthContext, useChatContext } from '../../context';
-import { FETCH_CHATROOM_MESSAGES } from '../../graphql/chat';
-import moment from "moment"
+import { FETCH_CHATROOM_MESSAGES, SUBSCRIBE_TO_CHATROOM } from '../../graphql/chat';
 import styles from './styeles.module.css'
+import Message from '../message/Index';
 
 // const messages = [
 //   {
@@ -97,59 +97,52 @@ import styles from './styeles.module.css'
 //   },
 // ]
 
-
 const ChatBody = () => {
 
-  const { chatState: { messages }, setMessagesHandler } = useChatContext()
+  const { chatState: { messages }, setMessagesHandler, addMessagesHandler } = useChatContext()
   const { userState: { user } } = useAuthContext()
   const { chatroomId } = useParams();
 
 
-  const [loadChatroomMessages, { called, loading, data }]
+
+  const [loadChatroomMessages, { called, loading }]
     = useLazyQuery(FETCH_CHATROOM_MESSAGES, {
-      variables: {
-        chatroomId: chatroomId[chatroomId.length - 1]
-      },
-      onCompleted: (data) => {
-        console.log(data);
-        setMessagesHandler(data.fetchChatroomMessages.messages)
-      },
-      onError: (error) => {
-        console.log(error);
-      }
+  variables: {
+    chatroomId: chatroomId[chatroomId.length - 1]
+  },
+  onCompleted: (data) => {
+    setMessagesHandler(data.fetchChatroomMessages.messages)
+  },
+  onError: (error) => {
+    console.log(error);
+  }
     });
 
   useEffect(() => {
     loadChatroomMessages()
-  }, [])
 
+  }, [loading])
 
+  const { data, loading: subLoading } = useSubscription(
+    SUBSCRIBE_TO_CHATROOM,
+    {
+      variables: {
+        chatroomId: chatroomId[chatroomId.length - 1]
+      },
+      onSubscriptionData: (data) => {
+        console.log(data);
+        addMessagesHandler(data.subscriptionData.data.onNewMessageCreated);
+      },
+    }
+  )
 
   return (
     <div className={styles.chatBodyContainer}>
       {
-        messages.map((message, index) => {
+        messages?.map((message, index) => {
           const loggedInUser = Number(message.author.id) === Number(user.id) ? true : false
           const position = loggedInUser ? `${styles.message} ${styles.flexEnd}` : `${styles.message}`
-          return (
-            <div className={position} key={index}>
-              <div className={styles.col}>
-                <div className={styles.left}>
-                  <img src={message.avatar ? messages.avatar : "https://cdn-icons-png.flaticon.com/512/147/147142.png"} className={styles.avatar} alt="user avatar" />
-                </div>
-                <div className={styles.right}>
-                  <div className={styles.content}>
-                    {message.content}
-                  </div>
-                  <span className={styles.time}>
-                    {
-                      moment(message.createdAt).startOf("min").fromNow()
-                    }
-                  </span>
-                </div>
-              </div>
-            </div>
-          )
+          return <Message message={message} key={index} position={position} />
         })
       }
     </div>

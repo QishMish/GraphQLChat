@@ -29,6 +29,11 @@ module.exports = {
       password: {
         type: Sequelize.STRING,
       },
+      profile_img: {
+        type: Sequelize.STRING,
+        defaultValue: "https://cdn-icons-png.flaticon.com/512/147/147142.png",
+        allowNull: false,
+      },
       verified: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,

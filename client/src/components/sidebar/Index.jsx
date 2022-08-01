@@ -8,10 +8,13 @@ import { useAuthContext } from '../../context'
 import { Link, useNavigate } from 'react-router-dom'
 
 import styles from './styles.module.css'
+import { useSidebarContext } from '../../context/sidebarContext/sidebarContext'
 
 const SideBar = () => {
   const { onLogOut } = useAuthContext()
   const navigate = useNavigate();
+
+  const { setSidebarCurrentElement } = useSidebarContext()
 
   const logOutHandler = () => {
     onLogOut()
@@ -28,8 +31,8 @@ const SideBar = () => {
         </div>
       </Link>
       <div className={styles.links}>
-        <BsChatLeftText className={styles.active} />
-        <FiUsers />
+        <BsChatLeftText className={styles.active} id="conversations" onClick={(e) => setSidebarCurrentElement(e.target.id)} />
+        <FiUsers id="users" onClick={(e) => setSidebarCurrentElement(e.target.id)} />
       </div>
       <div className={styles.signout} onClick={logOutHandler}>
         <MdLogout />

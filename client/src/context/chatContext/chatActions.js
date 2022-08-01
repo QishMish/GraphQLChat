@@ -1,4 +1,4 @@
-import { SET_CHATROOMS, SET_MESSAGES } from "./chatConstants";
+import { ADD_MESSAGE, SET_CHATROOMS, SET_MESSAGES } from "./chatConstants";
 
 export const setChatrooms = (chatrooms) => {
   return {
@@ -11,5 +11,11 @@ export const setMessages = (messages) => {
   return {
     type: SET_MESSAGES,
     payload: messages,
+  };
+};
+export const addMessage = (message) => {
+  return {
+    type: ADD_MESSAGE,
+    payload: message,
   };
 };

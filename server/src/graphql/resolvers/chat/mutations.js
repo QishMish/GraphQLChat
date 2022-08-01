@@ -1,14 +1,16 @@
-const chatService = require('./../../../services/chat.service');
+const chatService = require("./../../../services/chat.service");
 
-const chatMutation = {
-  sendNewMessage: async (parent, args, ctx) => {
+const chatMutations = {
+  sendNewMessage: async (parent, args, { pubsub, user }) => {
     const { chatroomId, newMessageInput } = args;
-    const { id: userId } = ctx.user;
+    const { id: userId } = user;
+    
     const newMessageResponse = await chatService.sendNewMessage(
       userId,
       chatroomId,
       newMessageInput
     );
+    pubsub.publish("NEW_MESSAGE", { onNewMessageCreated: newMessageResponse });
     return newMessageResponse;
   },
   deleteMessage: async (parent, args, ctx) => {
@@ -20,8 +22,8 @@ const chatMutation = {
       messageId
     );
     return {
-      status: 'SUCCESS',
-      message: 'Message has been removed',
+      status: "SUCCESS",
+      message: "Message has been removed",
     };
   },
   createChatroomGroup: async (parent, args, ctx) => {
@@ -45,11 +47,11 @@ const chatMutation = {
         addChatRoomGroupMembersInput
       );
     return {
-      status: 'SUCCESS',
+      status: "SUCCESS",
       message:
         addChatRoomGroupMembersInput.length > 1
-          ? 'Users successfully added to chatroom'
-          : 'User successfully added to chatroom',
+          ? "Users successfully added to chatroom"
+          : "User successfully added to chatroom",
     };
   },
   removeChatRoomGroupMembers: async (parent, args, ctx) => {
@@ -64,11 +66,11 @@ const chatMutation = {
         removeChatRoomGroupMemberInput
       );
     return {
-      status: 'SUCCESS',
+      status: "SUCCESS",
       message:
         removeChatRoomGroupMemberInput.length > 1
-          ? 'Users successfully added to chatroom'
-          : 'User successfully added to chatroom',
+          ? "Users successfully added to chatroom"
+          : "User successfully added to chatroom",
     };
   },
   deleteChatroomGroup: async (parent, args, ctx) => {
@@ -80,10 +82,10 @@ const chatMutation = {
       chatroomId
     );
     return {
-      status: 'SUCCESS',
+      status: "SUCCESS",
       message: `Successfully deleted chatroom ${chatroomId}`,
     };
   },
 };
 
-module.exports = { chatMutation };
+module.exports = { chatMutations };

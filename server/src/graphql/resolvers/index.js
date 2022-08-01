@@ -1,7 +1,8 @@
 const { userMutation } = require("./user/mutations");
 const { userQueries } = require("./user/queries");
 const { chatQueries } = require("./chat/queries");
-const { chatMutation } = require("./chat/mutations");
+const { chatMutations } = require("./chat/mutations");
+const { chatSubscriptions } = require("./chat/subscriptions");
 const { adminQueries } = require("../admin/resolvers/queries");
 const { adminMutations } = require("../admin/resolvers/mutations");
 
@@ -11,15 +12,17 @@ const resolvers = {
     ...userQueries,
     ...chatQueries,
     //admin
-    ...adminQueries
+    ...adminQueries,
   },
   Mutation: {
     //default user
     ...userMutation,
-    ...chatMutation,
+    ...chatMutations,
     //admin
-    ...adminMutations
-
+    ...adminMutations,
+  },
+  Subscription: {
+    ...chatSubscriptions,
   },
 };
 

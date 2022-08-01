@@ -22,7 +22,7 @@ const authMiddleware = async (context) => {
     const valid = await verifyJwt(token, JWT_ACCESS_TOKEN_KEY);
     const user = valid ? await getUserById(valid.id) : null;
     console.log(user);
-    user ? (context.user = user.user) : null;
+    user ? (context.user = user.user) : (context.user = null);
   }
 
   return context;

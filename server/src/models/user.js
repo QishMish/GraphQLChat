@@ -60,6 +60,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      profile_img: {
+        type: DataTypes.STRING,
+        defaultValue: "https://cdn-icons-png.flaticon.com/512/147/147142.png",
+        allowNull: false,
+      },
       verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

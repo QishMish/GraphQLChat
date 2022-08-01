@@ -1,2 +1,3 @@
 export const SET_CHATROOMS = "SET_CHATROOMS"
 export const SET_MESSAGES = "SET_MESSAGES"
+export const ADD_MESSAGE = "ADD_MESSAGES"

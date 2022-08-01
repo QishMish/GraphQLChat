@@ -57,6 +57,7 @@ const fetchChatroomMessages = async (chatroomId) => {
       },
     ],
   });
+
   return {
     status: "SUCCESS",
     response: chatRoom,
@@ -92,7 +93,18 @@ const sendNewMessage = async (userId, chatroomId, newMessageInput) => {
     author_id: user.id,
     chatroom_id: chatroomId,
   });
-  return message;
+
+  const messageWithAuthor = await Message.findOne({
+    where: {
+      id: message.id,
+    },
+    include: {
+      model: User,
+      as: "author",
+    },
+  });
+
+  return messageWithAuthor;
 };
 const deleteMessage = async (userId, messageId) => {
   const message = await Message.findOne({

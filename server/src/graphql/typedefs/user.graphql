@@ -27,4 +27,5 @@ type UserDto {
   roles: [Roles!]!
   verified:Boolean!
   isActive:Boolean!
+  profile_img:String!
 }

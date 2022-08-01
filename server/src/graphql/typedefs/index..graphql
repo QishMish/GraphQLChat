@@ -1,6 +1,6 @@
 type Query {
   #user
-  me:UserDto
+  me: UserDto
   getUserByUsername(username: String!): UserDto
 
   #chat
@@ -12,7 +12,7 @@ type Query {
   getUserById(userId: ID!): UserDto
 
   #chat
-  fetchChatRoomUsers(chatroomId:ID!):[UserDto!]!
+  fetchChatRoomUsers(chatroomId: ID!): [UserDto!]!
 }
 type Mutation {
   #user
@@ -47,9 +47,12 @@ type Mutation {
   deleteChatroomGroup(userId: ID!, chatroomId: ID!): GenericResponse!
 
   #admin
-  sendChatMessageFromAdministration(chatroomId: ID!, newMessageInput: NewMessageInput!):GenericResponse!
-  removeMessage(messageId:ID!):GenericResponse!
+  sendChatMessageFromAdministration(
+    chatroomId: ID!
+    newMessageInput: NewMessageInput!
+  ): GenericResponse!
+  removeMessage(messageId: ID!): GenericResponse!
 }
-# type Subscription {
-#   onMessageCreated: [Message]
-# }
+type Subscription {
+  onNewMessageCreated(chatroomId: ID!): Message
+}

@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useReducer,
 } from "react";
-import { setChatrooms, setMessages } from "./chatActions";
+import { addMessage, setChatrooms, setMessages } from "./chatActions";
 import { SET_CHATROOMS, SET_MESSAGES } from "./chatConstants";
 import { chatReducer } from "./chatReducer";
 
@@ -29,6 +29,10 @@ export default function ChatProvider(props) {
     dispatchChat(setMessages(messages));
   };
 
+  const addMessagesHandler = (message) => {
+    dispatchChat(addMessage(message));
+  };
+
   return (
     <chatContext.Provider
       value={{
@@ -36,6 +40,7 @@ export default function ChatProvider(props) {
         dispatchChat: dispatchChat,
         setChatroomsHandler: setChatroomsHandler,
         setMessagesHandler: setMessagesHandler,
+        addMessagesHandler:addMessagesHandler
       }}
     >
       {props.children}

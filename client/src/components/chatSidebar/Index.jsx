@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import React, { useEffect } from 'react'
 
 import { v4 as uuidv4 } from 'uuid';
@@ -17,8 +17,9 @@ const ChatSidebar = () => {
 	const { setChatroomsHandler, chatState: { chatrooms } } = useChatContext()
 	const { userState: { user } } = useAuthContext()
 
-	const [loadChatrooms, { called, loading, data }] = useLazyQuery(FETCH_CHATROOMS, {
+	const { loading, error, data } = useQuery(FETCH_CHATROOMS, {
 		onCompleted: (data) => {
+			console.log(data);
 			setChatroomsHandler(data.fetchChatrooms)
 		},
 		onError: (error) => {
@@ -26,11 +27,6 @@ const ChatSidebar = () => {
 		}
 	});
 
-	useEffect(() => {
-		loadChatrooms()
-	}, [])
-
-	
 
 
 	const conversations = [
@@ -69,61 +65,61 @@ const ChatSidebar = () => {
 				loading ? (
 					<Loading />
 				) : (
-					<div className={styles.chatSidebar}>
-						<ChatSidebarHeader />
-						<div className={styles.chatSidebarBody}>
-							<div className={styles.wrapper}>
-								<div className={styles.search}>
-									<input type="text" placeholder='Search' className={styles.searchInput} />
-									<BiSearch className={styles.searchIcon} />
-								</div>
-								<div className={styles.conversations}>
-									{
-										chatrooms?.map((conversation, index) => {
-											let param = conversation.type == "ONE_TO_ONE" ? conversation.users.find(u => Number(u.id) !== user.id).username : conversation.name
+					// <div className={styles.chatSidebar}>
+					// 	<ChatSidebarHeader />
+					// 	<div className={styles.chatSidebarBody}>
+					// 		<div className={styles.wrapper}>
+					// 			<div className={styles.search}>
+					// 				<input type="text" placeholder='Search' className={styles.searchInput} />
+					// 				<BiSearch className={styles.searchIcon} />
+					// 			</div>
+					<div className={styles.conversations}>
+						{
+							chatrooms?.map((conversation, index) => {
+								let param = conversation.type == "ONE_TO_ONE" ? conversation.users.find(u => Number(u.id) !== user.id)?.username : conversation.name
 
-											// const manyToManyChatroom = chatrooms?.find((chatroom) => chatroom.name === param)
-											// const oneToOneChatroom = chatrooms?.find((chatroom) => {
-											// 	const found = chatroom?.users.find(u => u.username === param)
-											// 	if (found) {
-											// 		return found
-											// 	}
-											// })
-											// const chatroomId = manyToManyChatroom ? manyToManyChatroom?.id : oneToOneChatroom?.id
+								// const manyToManyChatroom = chatrooms?.find((chatroom) => chatroom.name === param)
+								// const oneToOneChatroom = chatrooms?.find((chatroom) => {
+								// 	const found = chatroom?.users.find(u => u.username === param)
+								// 	if (found) {
+								// 		return found
+								// 	}
+								// })
+								// const chatroomId = manyToManyChatroom ? manyToManyChatroom?.id : oneToOneChatroom?.id
 
-											param = uuidv4().concat(conversation.id)
-											return (
-												<Link to={param} className={styles.conversation} key={index}>
-													<div className={styles.left}>
-														<img className={styles.avatar} src={conversation.avatar ? conversation.avatar : "https://cswnn.edu.in/system/files/2021-02/avatar-png-1-original.png"} alt={conversation.username} />
-													</div>
-													<div className={styles.center}>
-														{/* <h3>{conversation.username}</h3> */}
-														<div className={styles.users}>
-															{
-																conversation.users.map((participants, index) => {
-																	if (user.id !== Number(participants.id)) {
-																		return <h4 key={index}>{participants.username}</h4>
-																	}
-																})
-															}
-														</div>
-
-														<span>{conversation.lastMessage ? conversation.lastMessage : "bye"}</span>
-													</div>
-													<div className={styles.right}>
-														<span className={styles.lastMessageSentTime}>{conversation.lastMessageSent ? conversation.lastMessageSent : "21:01"}</span>
-														<span className={conversation.unSeenMessages < 1 ? styles.none : styles.unSeenMessages}>{conversation.unSeenMessages ? conversation.unSeenMessages : 1}</span>
-													</div>
-												</Link>
-											)
-										})
-									}
-								</div>
-
-							</div>
-						</div>
+								param = uuidv4().concat(conversation.id)
+								return (
+									<Link to={param} className={styles.conversation} key={index}>
+										<div className={styles.left}>
+											<img className={styles.avatar} src={conversation.avatar ? conversation.avatar : "https://cswnn.edu.in/system/files/2021-02/avatar-png-1-original.png"} alt={conversation.username} />
+										</div>
+										<div className={styles.center}>
+											{/* <h3>{conversation.username}</h3> */}
+											<div className={styles.users}>
+												{
+													conversation.users.map((participants, index) => {
+														if (user.id !== Number(participants.id)) {
+															const dot = conversation.users.length > 2 ? true : false
+															return <h4 key={index}>{`${participants.username}`}</h4>
+														}
+													})
+												}
+											</div>
+											<span>{conversation.lastMessage ? conversation.lastMessage : "bye"}</span>
+										</div>
+										<div className={styles.right}>
+											<span className={styles.lastMessageSentTime}>{conversation.lastMessageSent ? conversation.lastMessageSent : "21:01"}</span>
+											<span className={conversation.unSeenMessages < 1 ? styles.none : styles.unSeenMessages}>{conversation.unSeenMessages ? conversation.unSeenMessages : 1}</span>
+										</div>
+									</Link>
+								)
+							})
+						}
 					</div>
+
+					// 		</div>
+					// 	</div>
+					// </div>
 				)
 			}
 		</>

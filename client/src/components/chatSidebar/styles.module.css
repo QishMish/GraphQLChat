@@ -1,131 +1,139 @@
 .chatSidebar {
-    max-width: 450px;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    padding: 0 20px 20px 20px;
+  max-width: 450px;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 0 20px 20px 20px;
 }
 
 .wrapper {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 100%;
 }
 
 .chatSidebarBody {
-    background-color: #ffffff;
-    border-radius: 40px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
+  background-color: #ffffff;
+  border-radius: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
 }
 
 .search {
-    position: relative;
-    width: 90%;
-    max-width: 360px;
-    padding: 30px 0;
+  position: relative;
+  width: 90%;
+  max-width: 360px;
+  padding: 30px 0;
 }
 
 .searchInput {
-    border-radius: 20px;
-    padding: 3px 2px;
-    background-color: #F0F4F8;
-    height: 50px;
-    width: 100%;
+  border-radius: 20px;
+  padding: 3px 2px;
+  background-color: #f0f4f8;
+  height: 50px;
+  width: 100%;
 }
 
 .searchIcon {
-    color: #102D5B;
-    font-size: 20px;
-    position: absolute;
-    top: 50%;
-    right: 4%;
-    transform: translateY(-50%);
+  color: #102d5b;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  right: 4%;
+  transform: translateY(-50%);
 }
 
 .conversations {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 90%;
-    gap: 15px
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  gap: 15px;
 }
 
 .conversation {
-    width: 100%;
-    max-width: 360px;
-    display: flex;
-    padding: 2px 3px;
-    cursor: pointer;
+  max-width: 360px;
+  width: 100%;
+  display: flex;
+  padding: 2px 3px;
+  cursor: pointer;
 }
 
 .avatar {
-    width: 50px;
-    height: 50px;
+  width: 50px;
+  height: 50px;
 }
 
 .left {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
 }
 
 .center {
-    flex: 2;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
+  flex: 2;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  max-width: 100%;
 }
 
 .center h4 {
-    color: #102D5B;
-    padding-right: 5px;
+  color: #102d5b;
+  padding-right: 5px;
 }
-.users{
-    display: flex;
+.users {
+  display: flex;
+  /* max-width: 120px; */
+  width: 100%;
+  overflow-x: scroll;
+}
+.users h4 {
+  /* width: 100%; */
 }
 
 .center span {
-    color: #102D5B;
+  color: #102d5b;
 }
 
 .right {
-    flex: 1;
-    display: flex;
-    align-items: flex-end;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
 }
 
 .lastMessageSentTime {
-    color: #102D5B;
+  color: #102d5b;
 }
 
 .unSeenMessages {
-    color: #ffffff;
-    background-color: #FE5366;
-    padding: 3px;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 15px;
+  color: #ffffff;
+  background-color: #fe5366;
+  padding: 3px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 15px;
 }
-
 .none {
-    opacity: 0;
+  opacity: 0;
 }
