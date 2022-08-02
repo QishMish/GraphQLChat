@@ -8,8 +8,11 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
 import { GET_USERS } from '../../graphql/chat'
 import { useState } from 'react'
+import { useChatContext } from '../../context'
 
 const UsersBar = () => {
+
+    const { chatState: { chatUsers }, setChatUsersHandler } = useChatContext()
 
     const [users, setUsers] = useState([])
 
@@ -17,6 +20,7 @@ const UsersBar = () => {
         onCompleted: (data) => {
             console.log(data.getUsers);
             setUsers(data.getUsers)
+            setChatUsersHandler(data.getUsers)
         },
         onError: (error) => {
             console.log(error);
@@ -107,7 +111,7 @@ const UsersBar = () => {
         // }
     ];
     let previousChar = ''
-    const usersList = users?.slice().sort((a, b) => a.username.localeCompare(b.username))?.map((u, i) => {
+    const usersList = chatUsers?.slice().sort((a, b) => a.username.localeCompare(b.username))?.map((u, i) => {
         const param = uuidv4().concat(u.id)
 
         if (u.username.charAt(0) !== previousChar) {

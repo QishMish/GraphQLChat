@@ -5,9 +5,19 @@ import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { BsEmojiSmile } from 'react-icons/bs'
 
 import styles from './styles.module.css'
+import { useMutation } from '@apollo/client'
+import { DELETE_MESSAGE, FETCH_CHATROOM_MESSAGES } from '../../graphql/chat'
+import { useAuthContext } from '../../context'
 
 const Message = ({ message, position, index }) => {
+
+    const { userState: { user } } = useAuthContext()
+
     const [optionModalOpen, setOptionModalOpen] = useState(false)
+
+    const [deleteMessage, { data, loading, error }] = useMutation(DELETE_MESSAGE, {
+        refetchQueries: FETCH_CHATROOM_MESSAGES
+    });
 
 
     useEffect(() => {
@@ -24,8 +34,18 @@ const Message = ({ message, position, index }) => {
         }
     }
 
-    const messageDeleteHandler = (id) => {
+    const messageDeleteHandler = ({ id, authorId }) => {
         console.log("message deleted", id);
+        if (!Number(authorId) === Number(user.id)) {
+            return
+        }
+        console.log("object");
+
+        deleteMessage({
+            variables: {
+                messageId: id
+            }
+        })
         setOptionModalOpen(false)
     }
     return (
@@ -43,7 +63,10 @@ const Message = ({ message, position, index }) => {
                         <BiDotsVerticalRounded id='option' className={styles.optionIcon} onClick={() => setOptionModalOpen((prev) => !prev)} />
                     </div>
                     <div className={optionModalOpen ? `${styles.optionProps}` : `${styles.optionProps} ${styles.none}`}>
-                        <span id="remove" onClick={() => messageDeleteHandler(message.id)} >remove</span>
+                        <span id="remove" onClick={() => messageDeleteHandler({
+                            id: message.id,
+                            authorId: message.author_id
+                        })} >remove</span>
                     </div>
                     <span className={styles.time}>
                         {

@@ -1,20 +1,29 @@
-import { useLazyQuery, useQuery } from '@apollo/client'
-import React, { useEffect } from 'react'
-
-import { v4 as uuidv4 } from 'uuid';
-import { BiSearch } from 'react-icons/bi'
+import React, { useState } from 'react'
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import { Link } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid';
+
+import { CREATE_CHATROOM, FETCH_CHATROOMS, GET_USERS } from '../../graphql/chat'
 import { useAuthContext, useChatContext } from '../../context'
-import { FETCH_CHATROOMS } from '../../graphql/chat'
-import ChatSidebarHeader from '../chatSidebarHeader/Index'
+
+//components
 import Loading from '../loading/Index'
 
+//icons
+import { MdGroups, MdDoneOutline } from 'react-icons/md'
+import { BiSearch } from 'react-icons/bi'
+import { IoCreateOutline } from 'react-icons/io5'
 
 import styles from './styles.module.css'
 
 const ChatSidebar = () => {
 
-	const { setChatroomsHandler, chatState: { chatrooms } } = useChatContext()
+	const [addChatRoomModalIsOpen, setAddChatRoomModalIsOpen] = useState(false)
+	const [chatroomName, setChatroomName] = useState("")
+	const [selectedUsers, setSelectedUsers] = useState([])
+
+
+	const { setChatroomsHandler, setChatUsersHandler, chatState: { chatrooms, chatUsers } } = useChatContext()
 	const { userState: { user } } = useAuthContext()
 
 	const { loading, error, data } = useQuery(FETCH_CHATROOMS, {
@@ -26,41 +35,92 @@ const ChatSidebar = () => {
 			console.log(error);
 		}
 	});
+	const [loadUsers, { called, loading: loadUsersLoading, data: loadUsersData }] = useLazyQuery(
+		GET_USERS, {
+		onCompleted: (data) => {
+			console.log(data);
+			setChatUsersHandler(data.getUsers)
+		},
+	}
+	);
+	const [createChatroom, { data: createChatroomData, loading: createChatroomLoading, error: createChatroomError }] = useMutation(CREATE_CHATROOM, { refetchQueries: [{ query: FETCH_CHATROOMS }] });
 
 
+	const setAddChatRoomModalIsOpenHandler = () => {
+		setAddChatRoomModalIsOpen((prev) => !prev)
+		if (!chatUsers.length) {
+			loadUsers()
+		}
+	}
+	const selectUserHandler = (e) => {
+		const id = e.target.id
+		const username = e.target.value
 
-	const conversations = [
-		{
-			avatar: "https://cswnn.edu.in/system/files/2021-02/avatar-png-1-original.png",
-			username: "John Doe",
-			lastMessage: "good by darlin",
-			lastMessageSent: "09:30",
-			unSeenMessages: 3
-		},
-		{
-			avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqBRf6IebusCtv_rsoHZ6rMDP5jtf2QH70czdsQVo-dx6JEHbbZz2g_KUnBEg0-ou2tcM&usqp=CAU",
-			username: "Liza Cage",
-			lastMessage: "good by darlin",
-			lastMessageSent: "09:30",
-			unSeenMessages: 1
-		},
-		{
-			avatar: "https://cdn-icons-png.flaticon.com/512/194/194938.png",
-			username: "Ana Maria",
-			lastMessage: "good by darlin",
-			lastMessageSent: "09:30",
-			unSeenMessages: 0
-		},
-		{
-			avatar: "https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg",
-			username: "Stive bruce",
-			lastMessage: "good by darlin",
-			lastMessageSent: "09:30",
-			unSeenMessages: 1
-		},
-	]
+		const exist = selectedUsers.find(u => u.id === id)
+
+		if (exist) return discardUserHandler(exist.id)
+
+		setSelectedUsers((prev) => {
+			return [
+				...prev,
+				{
+					id: id,
+					username: username,
+				}
+			]
+		})
+	}
+	const discardUserHandler = (id) => setSelectedUsers(selectedUsers.filter(item => Number(item.id) !== Number(id)))
+
+	const completeChatroomCreation = () => {
+		if (!chatroomName) {
+			return
+		}
+		createChatroom({
+			variables: {
+				createChatroomGroupInput: {
+					name: chatroomName,
+					type: "MANY_TO_MANY",
+					members: selectedUsers
+				}
+			}
+		})
+		selectedUsers([])
+		setChatroomName("")
+		setAddChatRoomModalIsOpen(false)
+	}
+
 	return (
 		<>
+			<div className={styles.chatroomGroup}>
+				<IoCreateOutline className={styles.createChatroomGroup} onClick={setAddChatRoomModalIsOpenHandler} />
+			</div>
+			{
+				addChatRoomModalIsOpen && (
+					<div className={styles.addChatroomOptions}>
+						<input type="text" placeholder='name' name="name" id="name" value={chatroomName} onChange={(e) => setChatroomName(e.target.value)} />
+						<div className={styles.optionsList}>
+							{
+								loadUsersLoading && <p>...</p>
+							}
+							{
+								chatUsers?.map((u, i) => {
+									return (
+										<div className={styles.user} key={i}>
+											<input type="checkbox" id={u.id} name="user" onChange={selectUserHandler} value={u.username} />
+											<label htmlFor="user1">{u.username}</label>
+										</div>
+									)
+								})
+							}
+						</div>
+						<div className={styles.completeChatroomCreation} onClick={completeChatroomCreation}>
+							<MdDoneOutline />
+						</div>
+					</div>
+				)
+			}
+
 			{
 				loading ? (
 					<Loading />
@@ -88,6 +148,8 @@ const ChatSidebar = () => {
 								// const chatroomId = manyToManyChatroom ? manyToManyChatroom?.id : oneToOneChatroom?.id
 
 								param = uuidv4().concat(conversation.id)
+								const conversationSlug = conversation.type === "MANY_TO_MANY" ? `Chatroom:${conversation.name}` : conversation.users.find(u => Number(u.id) !== user.id)?.username
+
 								return (
 									<Link to={param} className={styles.conversation} key={index}>
 										<div className={styles.left}>
@@ -96,14 +158,17 @@ const ChatSidebar = () => {
 										<div className={styles.center}>
 											{/* <h3>{conversation.username}</h3> */}
 											<div className={styles.users}>
-												{
+												{/* {
 													conversation.users.map((participants, index) => {
 														if (user.id !== Number(participants.id)) {
-															const dot = conversation.users.length > 2 ? true : false
+															// const dot = conversation.users.length > 2 ? true : false
 															return <h4 key={index}>{`${participants.username}`}</h4>
 														}
 													})
-												}
+												} */}
+												<h4>
+													{conversationSlug}
+												</h4>
 											</div>
 											<span>{conversation.lastMessage ? conversation.lastMessage : "bye"}</span>
 										</div>

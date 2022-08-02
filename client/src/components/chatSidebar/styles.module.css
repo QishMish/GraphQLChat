@@ -49,7 +49,66 @@
   right: 4%;
   transform: translateY(-50%);
 }
-
+.chatroomGroup {
+  /* width: 90%; */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 0 30px 20px 30px;
+}
+.createChatroomGroup {
+  font-size: 30px;
+  color: #3bb1bc;
+  cursor: pointer;
+}
+.addChatroomOptions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  height: 140px;
+  overflow-y: scroll;
+}
+.addChatroomOptions input {
+  width: 80%;
+}
+.addChatroomOptions div {
+  display: flex;
+  width: 90%;
+  align-items: center;
+  justify-content: space-between;
+}
+.user {
+  display: flex;
+  justify-content: start !important;
+}
+.user input {
+  width: 20px;
+  display: block;
+  margin: 0 10px;
+}
+.user label {
+  display: block;
+  font-size: 16px;
+  color: #102d5b;
+}
+.completeChatroomCreation {
+  font-size: 30px;
+  color: #3bb1bc;
+  width: 90% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  cursor: pointer;
+}
 .conversations {
   display: flex;
   flex-direction: column;

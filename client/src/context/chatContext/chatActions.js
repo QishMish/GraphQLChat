@@ -1,4 +1,11 @@
-import { ADD_MESSAGE, SET_CHATROOMS, SET_MESSAGES } from "./chatConstants";
+import {
+  ADD_MESSAGE,
+  HANDLE_DELETED_MESSAGE,
+  SET_CHATROOMS,
+  SET_CHAT_USERS,
+  SET_CURRENT_CHATROOM,
+  SET_MESSAGES,
+} from "./chatConstants";
 
 export const setChatrooms = (chatrooms) => {
   return {
@@ -16,6 +23,24 @@ export const setMessages = (messages) => {
 export const addMessage = (message) => {
   return {
     type: ADD_MESSAGE,
+    payload: message,
+  };
+};
+export const setChatUsers = (users) => {
+  return {
+    type: SET_CHAT_USERS,
+    payload: users,
+  };
+};
+export const setCurrentChatroom = (chatroom) => {
+  return {
+    type: SET_CURRENT_CHATROOM,
+    payload: chatroom,
+  };
+};
+export const handleDeletedMessage = (message) => {
+  return {
+    type: HANDLE_DELETED_MESSAGE,
     payload: message,
   };
 };

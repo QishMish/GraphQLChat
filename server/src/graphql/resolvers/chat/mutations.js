@@ -4,7 +4,7 @@ const chatMutations = {
   sendNewMessage: async (parent, args, { pubsub, user }) => {
     const { chatroomId, newMessageInput } = args;
     const { id: userId } = user;
-    
+
     const newMessageResponse = await chatService.sendNewMessage(
       userId,
       chatroomId,
@@ -13,14 +13,17 @@ const chatMutations = {
     pubsub.publish("NEW_MESSAGE", { onNewMessageCreated: newMessageResponse });
     return newMessageResponse;
   },
-  deleteMessage: async (parent, args, ctx) => {
+  deleteMessage: async (parent, args, { pubsub, user }) => {
     const { messageId } = args;
-    const { id: userId } = ctx.user;
+    const { id: userId } = user;
 
     const deleteMessageResponse = await chatService.deleteMessage(
       userId,
       messageId
     );
+    pubsub.publish("MESSAGE_DELETED", {
+      onMessageDeleted: deleteMessageResponse,
+    });
     return {
       status: "SUCCESS",
       message: "Message has been removed",

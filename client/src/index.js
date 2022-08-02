@@ -13,7 +13,7 @@ import ChatProvider from "./context/chatContext/chatContext";
 import SidebarProvider from "./context/sidebarContext/sidebarContext";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
-import { split, HttpLink } from "@apollo/client";
+import { split } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
 
 const httpLink = createHttpLink({

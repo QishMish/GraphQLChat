@@ -24,6 +24,11 @@ export const FETCH_CHATROOM_MESSAGES = gql`
       name
       type
       creator_id
+      users {
+        id
+        username
+        profile_img
+      }
       messages {
         id
         content
@@ -67,7 +72,7 @@ export const GET_USERS = gql`
   }
 `;
 
-export const SUBSCRIBE_TO_CHATROOM = gql`
+export const SUBSCRIBE_TO_CHATROOM_NEW_MESSAGE_CREATION = gql`
   subscription OnNewMessageCreated($chatroomId: ID!) {
     onNewMessageCreated(chatroomId: $chatroomId) {
       id
@@ -77,6 +82,33 @@ export const SUBSCRIBE_TO_CHATROOM = gql`
         username
       }
       createdAt
+    }
+  }
+`;
+export const SUBSCRIBE_TO_CHATROOM_MESSAGE_DELETION = gql`
+  subscription Subscription($chatroomId: ID!) {
+    onMessageDeleted(chatroomId: $chatroomId) {
+      content
+      id
+    }
+  }
+`;
+export const CREATE_CHATROOM = gql`
+  mutation CreateChatroomGroup(
+    $createChatroomGroupInput: CreateChatroomGroupInput!
+  ) {
+    createChatroomGroup(createChatroomGroupInput: $createChatroomGroupInput) {
+      name
+      type
+    }
+  }
+`;
+
+export const DELETE_MESSAGE = gql`
+  mutation DeleteMessage($messageId: ID!) {
+    deleteMessage(messageId: $messageId) {
+      status
+      message
     }
   }
 `;
