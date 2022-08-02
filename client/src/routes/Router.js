@@ -1,6 +1,6 @@
 import React from "react";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Chat from "../pages/chat/Index";
 import ChatMessages from "../components/chat/Index";
@@ -14,6 +14,7 @@ const Router = () => {
     <BrowserRouter>
       <Routes>
         <Route element={<PrivateRoutes />}>
+          <Route path="/" element={<Navigate to="/chat" />} />
           <Route path="chat" element={<Chat />}>
             <Route path=":chatroomId" element={<ChatMessages />} />
           </Route>

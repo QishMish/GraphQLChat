@@ -1,15 +1,14 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
-const graphqlServer = require("./graphql");
+const { app, apolloServer } = require("./graphql");
 const { authMiddleware } = require("./middlewares/auth.middleware");
 
-const app = express();
+// const app = express();
 
-app.use(cookieParser());
+
 
 (async () => {
-  await graphqlServer.start();
-  graphqlServer.applyMiddleware({
+  await apolloServer.start();
+  apolloServer.applyMiddleware({
     app,
     // authMiddleware,
   });

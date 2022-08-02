@@ -42,7 +42,7 @@ const ChatInput = () => {
       <div className={styles.leftControl}>
         <MdAttachFile className={styles.fileIcon} />
       </div>
-      <input type="text" placeholder='Type a message' className={styles.chatInput} onChange={(e) => setMessage(e.target.value)} />
+      <input type="text" placeholder='Type a message' className={styles.chatInput} value={message} onChange={(e) => setMessage(e.target.value)} />
       <div className={styles.rightControl}>
         <GrEmoji className={styles.emojiIcon} />
         <AiOutlineSend className={styles.sendIcon} onClick={sendNewMessageHandler} />

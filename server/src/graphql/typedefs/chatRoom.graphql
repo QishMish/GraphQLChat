@@ -1,9 +1,10 @@
-type ChatRoom{
+type ChatRoom {
   id: ID!
   name: String!
   type: ChatRoomTypes!
   creator_id: ID!
   messages: [Message]!
+  messagesCount: ID
   users: [UserDto]!
   creator: UserDto!
 }
@@ -11,6 +12,11 @@ type ChatRoom{
 input CreateChatroomGroupInput {
   name: String!
   type: ChatRoomTypes
+  members: [ChatroomMember!]
+}
+input ChatroomMember {
+  id: ID!
+  username: String!
 }
 
 input AddChatRoomGroupMembersInput {
@@ -22,4 +28,3 @@ input RemoveChatRoomGroupMemberInput {
   id: ID
   username: String!
 }
-

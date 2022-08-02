@@ -1,5 +1,11 @@
-const { User, Chatroom, UserChatroom, Message } = require("../models");
-const { Op } = require("sequelize");
+const {
+  User,
+  Chatroom,
+  UserChatroom,
+  Message,
+  Sequelize,
+} = require("../models");
+const { Op, where } = require("sequelize");
 const { getMethods } = require("../utils/helper");
 const {
   UserInputError,
@@ -39,15 +45,29 @@ const fetchChatrooms = async (userId) => {
     response: chatrooms,
   };
 };
-const fetchChatroomMessages = async (chatroomId) => {
+const fetchChatroomMessages = async (chatroomId, offSet, limit) => {
   const chatRoom = await Chatroom.findOne({
     where: {
       id: chatroomId,
+    },
+    attributes: {
+      include: [
+        [
+          Sequelize.literal(`(SELECT COUNT(*) FROM messages AS msg
+            WHERE
+            msg.chatroom_id = ${chatroomId}
+         )`),
+          "messagesCount",
+        ],
+      ],
     },
     include: [
       {
         model: Message,
         as: "messages",
+        limit: limit,
+        order: [["createdAt", "DESC"]],
+
         include: [
           {
             model: User,
@@ -55,8 +75,14 @@ const fetchChatroomMessages = async (chatroomId) => {
           },
         ],
       },
+      {
+        model: User,
+        as: "users",
+      },
     ],
   });
+  console.log(chatRoom.messagesCount);
+  // console.log(JSON.parse(JSON.stringify(chatRoom)))
   return {
     status: "SUCCESS",
     response: chatRoom,
@@ -92,14 +118,26 @@ const sendNewMessage = async (userId, chatroomId, newMessageInput) => {
     author_id: user.id,
     chatroom_id: chatroomId,
   });
-  return message;
+
+  const messageWithAuthor = await Message.findOne({
+    where: {
+      id: message.id,
+    },
+    include: {
+      model: User,
+      as: "author",
+    },
+  });
+
+  return messageWithAuthor;
 };
 const deleteMessage = async (userId, messageId) => {
   const message = await Message.findOne({
-    id: messageId,
-    author_id: userId,
+    where: {
+      id: messageId,
+      author_id: userId,
+    },
   });
-
   if (!message)
     throw new UserInputError(
       "Incorrect message id or user not allowed for delete action"
@@ -112,7 +150,8 @@ const deleteMessage = async (userId, messageId) => {
   return message;
 };
 const createChatroomGroup = async (userId, createChatroomGroupInput) => {
-  const { name, type = "MANY_TO_MANY" } = createChatroomGroupInput;
+  const { name, type = "MANY_TO_MANY", members } = createChatroomGroupInput;
+
   const user = await User.findOne({
     where: {
       id: userId,
@@ -124,6 +163,19 @@ const createChatroomGroup = async (userId, createChatroomGroupInput) => {
     type: type,
     creator_id: userId,
   });
+
+  if (members) {
+    await Promise.all(
+      members.map(async (m) => {
+        const user = await User.findOne({
+          where: {
+            id: m.id,
+          },
+        });
+        await chatroomGroup.addUser(user);
+      })
+    );
+  }
 
   await user.addChatrooms(chatroomGroup);
 

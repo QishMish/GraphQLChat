@@ -1,18 +1,18 @@
 type Query {
   #user
-  me:UserDto
+  me: UserDto
   getUserByUsername(username: String!): UserDto
 
   #chat
   fetchChatrooms: [ChatRoom]!
-  fetchChatroomMessages(chatroomId: ID!): ChatRoom!
+  fetchChatroomMessages(chatroomId: ID!, offSet: Int, limit: Int): ChatRoom!
 
   #admin
   getUsers: [UserDto]!
   getUserById(userId: ID!): UserDto
 
   #chat
-  fetchChatRoomUsers(chatroomId:ID!):[UserDto!]!
+  fetchChatRoomUsers(chatroomId: ID!): [UserDto!]!
 }
 type Mutation {
   #user
@@ -31,7 +31,7 @@ type Mutation {
   sendNewMessage(chatroomId: ID!, newMessageInput: NewMessageInput!): Message!
   deleteMessage(messageId: ID!): GenericResponse!
   createChatroomGroup(
-    userId: ID!
+    # userId: ID
     createChatroomGroupInput: CreateChatroomGroupInput!
   ): ChatRoom!
   addChatRoomGroupMembers(
@@ -47,9 +47,13 @@ type Mutation {
   deleteChatroomGroup(userId: ID!, chatroomId: ID!): GenericResponse!
 
   #admin
-  sendChatMessageFromAdministration(chatroomId: ID!, newMessageInput: NewMessageInput!):GenericResponse!
-  removeMessage(messageId:ID!):GenericResponse!
+  sendChatMessageFromAdministration(
+    chatroomId: ID!
+    newMessageInput: NewMessageInput!
+  ): GenericResponse!
+  removeMessage(messageId: ID!): GenericResponse!
 }
-# type Subscription {
-#   onMessageCreated: [Message]
-# }
+type Subscription {
+  onNewMessageCreated(chatroomId: ID!): Message
+  onMessageDeleted(chatroomId: ID!): Message
+}

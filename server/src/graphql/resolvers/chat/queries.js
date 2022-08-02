@@ -7,8 +7,17 @@ const chatQueries = {
   },
   fetchChatroomMessages: async (parent, args, ctx) => {
     const { id: userId } = ctx.user;
-    const { chatroomId } = args;
-    const usersResponse = await chatService.fetchChatroomMessages(chatroomId);
+    const { chatroomId, offSet, limit } = args;
+    console.log(
+      offSet,
+      limit,
+      "+++++++++++++++++++++++++++++++++++++++++++++="
+    );
+    const usersResponse = await chatService.fetchChatroomMessages(
+      chatroomId,
+      offSet,
+      limit
+    );
     return usersResponse.response;
   },
 };

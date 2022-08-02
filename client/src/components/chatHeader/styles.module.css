@@ -1,55 +1,67 @@
-.chatHeaderContainer{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: column;
-    width: 100%;
-    padding: 0 10px;
+.chatHeaderContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 10px;
 }
-.col{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.col {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.left{
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.username{
-    color: #102D5B;
+.username {
+  color: #102d5b;
 }
-.icon{
-    width: 60px;
+.icon {
+  width: 60px;
 }
-.right{
-    font-size: 30px;
-    color: #FE5366;
-    cursor: pointer;
+.right {
+  font-size: 30px;
+  color: #fe5366;
+  cursor: pointer;
 }
-.filter{
-    padding: 20px 0;
-    display: flex;
-    gap: 20px;
+.filter {
+  padding: 20px 0;
+  display: flex;
+  gap: 20px;
 }
-.filterItem{
-    color: #10182B;
-    cursor: pointer;
+.filterItem {
+  color: #10182b;
+  cursor: pointer;
 }
-.active{
-    font-weight: bold;
-    color: #FE5366;
+.active {
+  font-weight: bold;
+  color: #fe5366;
 }
-.active::after{
-    content: "";
-    width: 10px;
-    height: 10px;
-    display: block;
-    background-color: #FE5366;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    margin-top: 5px;
+.active::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  display: block;
+  background-color: #fe5366;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  margin-top: 5px;
+}
+.chatroomUsers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #102d5b;
+}
+.membersIcon {
+  color: #102d5b;
+  font-size: 25px;
 }

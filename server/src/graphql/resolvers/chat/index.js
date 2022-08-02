@@ -1,4 +1,5 @@
 module.exports = {
   queries: require("./queries"),
-  mutation: require("./mutation"),
+  mutation: require("./mutations"),
+  subscription: require("./subscriptions"),
 };

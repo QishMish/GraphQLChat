@@ -3,7 +3,7 @@ const { ResourceNotFoundError } = require('../errors/ApiError');
 
 const getAll = async () => {
   const users = await User.findAll({
-    attributes: ['id', 'email', 'username'],
+    attributes: ['id', 'email', 'username',"profile_img"],
     include:[
       {
         model:Role,
