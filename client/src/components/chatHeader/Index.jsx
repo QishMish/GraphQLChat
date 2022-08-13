@@ -18,7 +18,7 @@ const ChatHeader = () => {
   const { chatState: { currentChatroom } } = useChatContext()
   const { userState: { user } } = useAuthContext()
 
-  const slug = currentChatroom.type === "MANY_TO_MANY" ? currentChatroom.name : currentChatroom.users?.find(u => Number(u.id) !== Number(user.id))?.username
+  const slug = currentChatroom?.type === "MANY_TO_MANY" ? currentChatroom.name : currentChatroom?.users?.find(u => Number(u.id) !== Number(user.id))?.username
 
 
   return (
@@ -43,7 +43,7 @@ const ChatHeader = () => {
           <li className={styles.filterItem}>Files</li>
         </ul>
         {
-          currentChatroom.type === "MANY_TO_MANY" && (
+          currentChatroom?.type === "MANY_TO_MANY" && (
             <div className={styles.chatroomUsers}>
               <MdGroups className={styles.membersIcon} />
               <li className={styles.filterItem} onClick={() => setMembersModalIsOpen(true)}>Members</li>

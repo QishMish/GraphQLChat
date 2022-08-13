@@ -5,8 +5,8 @@ import { HiStatusOnline } from 'react-icons/hi';
 import styles from './styles.module.css';
 import { v4 as uuidv4 } from 'uuid';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
-import { GET_USERS } from '../../graphql/chat';
+import { useQuery, useSubscription } from '@apollo/client';
+import { GET_USERS, SUBSUCRIBE_TO_NEW_USER_JOIN } from '../../graphql/chat';
 import { useState } from 'react';
 import { useAuthContext, useChatContext } from '../../context';
 
@@ -17,6 +17,7 @@ const UsersBar = () => {
   const {
     chatState: { chatUsers },
     setChatUsersHandler,
+    addActiveUserHandler
   } = useChatContext();
 
   const { loading, error, data } = useQuery(GET_USERS, {
@@ -32,7 +33,7 @@ const UsersBar = () => {
   });
 
   let previousChar = '';
-  const usersList = chatUsers
+  const usersList = chatUsers?.filter(u => Number(u.id) !== Number(user.id))
     ?.slice()
     .sort((a, b) => a.username.localeCompare(b.username))
     ?.map((u, i) => {
@@ -47,22 +48,22 @@ const UsersBar = () => {
                 {previousChar}
               </div>
             </div>
-            <Link to={param} className={styles.userList}>
+            <div className={styles.userList}>
               <div className={styles.username}>{u.username}</div>
               <div className={styles.status}>
                 <HiStatusOnline />
               </div>
-            </Link>
+            </div>
           </div>
         );
       } else {
         return (
-          <Link to={param} className={styles.userList} key={i}>
+          <div className={styles.userList} key={i}>
             <div className={styles.username}>{u.username}</div>
             <div className={styles.status}>
               <HiStatusOnline />
             </div>
-          </Link>
+          </div>
         );
       }
     });

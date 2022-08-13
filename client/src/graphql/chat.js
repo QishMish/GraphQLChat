@@ -112,3 +112,44 @@ export const DELETE_MESSAGE = gql`
     }
   }
 `;
+export const DELETE_CONVERSATION = gql`
+  mutation DeleteConversation($chatroomId: ID!) {
+    deleteConversation(chatroomId: $chatroomId) {
+      status
+      message
+    }
+  }
+`;
+
+export const REMOVE_CHAT_ROOMGROUP_MEMBERS = gql`
+  mutation RemoveChatRoomGroupMembers(
+    $userId: ID!
+    $chatroomId: ID!
+    $removeChatRoomGroupMemberInput: [RemoveChatRoomGroupMemberInput!]!
+  ) {
+    removeChatRoomGroupMembers(
+      userId: $userId
+      chatroomId: $chatroomId
+      removeChatRoomGroupMemberInput: $removeChatRoomGroupMemberInput
+    ) {
+      status
+      message
+    }
+  }
+`;
+export const SUBSUCRIBE_TO_NEW_USER_JOIN = gql`
+  subscription ActiveUsers {
+    activeUsers {
+      username
+      id
+    }
+  }
+`;
+export const FETCH_ACTIVE_USERS = gql`
+  query FetchActiveUsers {
+    fetchActiveUsers {
+      id
+      username
+    }
+  }
+`;

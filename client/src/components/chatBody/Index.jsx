@@ -16,12 +16,12 @@ const ChatBody = () => {
   const [loadChatroomMessages, { called, loading }]
     = useLazyQuery(FETCH_CHATROOM_MESSAGES, {
       variables: {
-        chatroomId: chatroomId[chatroomId.length - 1]
+        // chatroomId: chatroomId[chatroomId.length - 1]
+        chatroomId: chatroomId
       },
       onCompleted: (data) => {
-        console.log(data);
         setCurrentChatroomHandler(data.fetchChatroomMessages)
-        setMessagesHandler(data.fetchChatroomMessages.messages)
+        setMessagesHandler(data.fetchChatroomMessages?.messages)
       },
       onError: (error) => {
         console.log(error);
@@ -36,7 +36,8 @@ const ChatBody = () => {
     SUBSCRIBE_TO_CHATROOM_NEW_MESSAGE_CREATION,
     {
       variables: {
-        chatroomId: chatroomId[chatroomId.length - 1]
+        // chatroomId: chatroomId[chatroomId.length - 1]
+        chatroomId: chatroomId
       },
       onSubscriptionData: (data) => {
         console.log(data);

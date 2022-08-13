@@ -23,13 +23,16 @@ const SideBar = () => {
     navigate('/signin')
   }
 
+  const navigateHome = () => {
+    navigate('/chat')
+    setSidebarCurrentElement("conversations")
+  }
+
   return (
     <div className={styles.sidebarContainer}>
-      <Link to="/chat">
-        <div className={styles.logo}>
-          <BsChatSquareTextFill />
-        </div>
-      </Link>
+      <div className={styles.logo} onClick={navigateHome}>
+        <BsChatSquareTextFill />
+      </div>
       <div className={styles.links}>
         <BsChatLeftText className={styles.active} id="conversations" onClick={(e) => setSidebarCurrentElement(e.target.id)} />
         <FiUsers id="users" onClick={(e) => setSidebarCurrentElement(e.target.id)} />

@@ -20,19 +20,31 @@ const httpLink = createHttpLink({
   uri: "http://localhost:3001/graphql",
 });
 
+let accessToken = localStorage.getItem("access_token");
+let refreshToken = localStorage.getItem("refresh_token");
+
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem("access_token");
+  accessToken = localStorage.getItem("access_token");
+  refreshToken = localStorage.getItem("refresh_token");
   return {
     headers: {
       ...headers,
-      access_token: token ? `Bearer ${token}` : "",
-      refresh_token: token ? `Bearer ${token}` : "",
+      access_token: accessToken ? `Bearer ${accessToken}` : "",
+      refresh_token: refreshToken ? `Bearer ${refreshToken}` : "",
     },
   };
 });
 const wsLink = new GraphQLWsLink(
   createClient({
     url: "ws://localhost:3001/graphql",
+    connectionParams: {
+      access_token: localStorage.getItem("access_token")
+        ? `Bearer ${localStorage.getItem("access_token")}`
+        : "",
+      refresh_token: localStorage.getItem("refresh_token")
+        ? `Bearer ${localStorage.getItem("refresh_token")}`
+        : "",
+    },
   })
 );
 const splitLink = split(

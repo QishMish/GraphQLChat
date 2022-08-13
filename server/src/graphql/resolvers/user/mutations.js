@@ -1,34 +1,35 @@
+const { client } = require("../../../config/redisConfig");
 const authService = require("../../../services/auth.service");
 const userService = require("../../../services/user.service");
 const coockieConfig = require("./../../../utils/cookiesConfig");
 
 const userMutation = {
-  signUpUser: async (parent, args, { _, res }) => {
+  signUpUser: async (parent, args, { pubsub, user }) => {
     const { email, username, firstname, lastname, password } =
       args.signUpUserInput;
 
-    const { status, access_token, refresh_token } = await authService.signUp(
-      email,
-      username,
-      firstname,
-      lastname,
-      password
-    );
+    const { status, access_token, refresh_token, userProps } =
+      await authService.signUp(email, username, firstname, lastname, password);
+    pubsub.publish("ACTIVE_USERS", {
+      onNewUserJoined: JSON.parse(await client.get("activeUsers")),
+    });
     return { status, access_token, refresh_token };
   },
-  signInUser: async (parent, args, { _, res }) => {
+  signInUser: async (parent, args, { pubsub, user }) => {
     const { username, password } = args.signInUserInput;
 
-    const { status, access_token, refresh_token } = await authService.signIn(
-      username,
-      password
-    );
+    const { status, access_token, refresh_token, userProps } =
+      await authService.signIn(username, password);
+      
+    pubsub.publish("ACTIVE_USERS", {
+      onNewUserJoined: JSON.parse(await client.get("activeUsers")),
+    });
     return { status, access_token, refresh_token };
   },
   signOutUser: async (parent, args, { req, res }) => {
     const { id: userId } = ctx.user;
-    let token
-    if (req && req.headers.refresh_token ) {
+    let token;
+    if (req && req.headers.refresh_token) {
       token = req.headers.refresh_token.split("Bearer ")[1];
     }
     const signOutResponse = await authService.signOut(userId, token);
@@ -39,14 +40,14 @@ const userMutation = {
     };
   },
   refreshAccessToken: async (parent, args, { req, res }) => {
-    let token
-    if (req && req.headers.refresh_token ) {
+    let token;
+    if (req && req.headers.refresh_token) {
       token = req.headers.refresh_token.split("Bearer ")[1];
     }
     const { status, access_token } = await authService.refreshAccessToken(
-      token,
+      token
     );
- 
+
     return { status, access_token };
   },
   updateUser: async (parent, args, ctx) => {

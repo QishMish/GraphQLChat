@@ -2,8 +2,10 @@ const {
   User,
   Chatroom,
   UserChatroom,
+  DeletedUserChatroom,
   Message,
   Sequelize,
+  sequelize
 } = require("../models");
 const { Op, where } = require("sequelize");
 const { getMethods } = require("../utils/helper");
@@ -18,7 +20,28 @@ const {
 const { ResourceNotFoundError } = require("../errors/ApiError");
 
 const fetchChatrooms = async (userId) => {
+  const deletedChatroom = await DeletedUserChatroom.findAll({
+    user_id: userId,
+  });
+
+  const user = await User.findByPk(userId);
+
+  const userChatrooms = await user.getChatrooms();
+  console.log(userChatrooms[0]);
+
+  const userChatroomIds = userChatrooms.map((c) => c.id);
+
+  const exludeChatroomIds = deletedChatroom.map((c) => c.chatroom_id);
+
+  console.log(exludeChatroomIds);
+
   const chatrooms = await Chatroom.findAll({
+    where: {
+      id: {
+        [Op.not]: exludeChatroomIds,
+        [Op.in]: userChatroomIds,
+      },
+    },
     include: [
       {
         model: User,
@@ -45,24 +68,51 @@ const fetchChatrooms = async (userId) => {
     response: chatrooms,
   };
 };
-const fetchChatroomMessages = async (chatroomId, offSet, limit) => {
+const fetchChatroomMessages = async (userId, chatroomId, offSet, limit) => {
+  // const user = await User.findOne({
+  //   where: {
+  //     id: userId,
+  //   },
+  // });
+
+  const deletedChatroom = await DeletedUserChatroom.findOne({
+    user_id: userId,
+    chatroom_id: chatroomId,
+  });
+
+  // let lastMessage = 0;
+
+  // if (deletedChatroom) {
+  //   lastMessage.last_message_id;
+  // }
+
   const chatRoom = await Chatroom.findOne({
     where: {
       id: chatroomId,
     },
-    attributes: {
-      include: [
-        [
-          Sequelize.literal(`(SELECT COUNT(*) FROM messages AS msg
-            WHERE
-            msg.chatroom_id = ${chatroomId}
-         )`),
-          "messagesCount",
-        ],
-      ],
-    },
+    // attributes: {
+      // include: [
+        // [
+        //   Sequelize.literal(`(SELECT COUNT(*) FROM messages AS msg
+        //     WHERE
+        //     msg.chatroom_id = ${chatroomId}
+        //  )`),
+        //   "messagesCount",
+        // ],
+        // [
+        //   Sequelize.literal(`(SELECT content FROM messages AS msg
+        //       WHERE
+        //       msg.chatroom_id = ${chatroomId} LIMIT 1
+        //    )`),
+        //   "lastMessage",
+        // ],
+      // ],
+    // },
     include: [
       {
+        // where: {
+        //   id: { [Op.gt]: lastMessage },
+        // },
         model: Message,
         as: "messages",
         limit: limit,
@@ -81,8 +131,8 @@ const fetchChatroomMessages = async (chatroomId, offSet, limit) => {
       },
     ],
   });
-  console.log(chatRoom.messagesCount);
-  // console.log(JSON.parse(JSON.stringify(chatRoom)))
+  // console.log(chatRoom.messagesCount);
+  console.log(JSON.parse(JSON.stringify(chatRoom)))
   return {
     status: "SUCCESS",
     response: chatRoom,
@@ -216,6 +266,7 @@ const removeChatRoomGroupMembers = async (userId, chatroomId, members) => {
       creator_id: userId,
     },
   });
+  console.log(userId, chatroomId, members);
 
   if (!chatRoom) throw new UserInputError("Invalid creator id or chatroomId");
 
@@ -276,6 +327,50 @@ const removeMessage = async (messageId) => {
 
   return message;
 };
+const deleteConversation = async (userId, chatroomId) => {
+  const user = await User.findOne({
+    where: {
+      id: userId,
+    },
+  });
+  const conversation = await Chatroom.findOne({
+    where: {
+      id: chatroomId,
+    },
+    include: [
+      {
+        model: Message,
+        as: "messages",
+        separate: true,
+        order: [["id", "DESC"]],
+        limit: 1,
+      },
+    ],
+  });
+  console.log(conversation);
+
+  const userIn = await conversation.hasUser(user);
+  console.log(userIn);
+  console.log(getMethods(conversation));
+  console.log(await conversation.getUsers());
+
+  if (!userIn)
+    throw new UserInputError("Incorrect chatroom id or action not allowed");
+
+  const alreadyDeleted = await user.hasDeleted_chatrooms(conversation);
+
+  if (alreadyDeleted)
+    throw new new UserInputError("conversation already deleted")();
+
+  const lastMessageId =
+    conversation.messages.length > 0 ? conversation.messages[0]?.id : null;
+
+  await DeletedUserChatroom.create({
+    user_id: user.id,
+    chatroom_id: conversation.id,
+    last_message_id: lastMessageId,
+  });
+};
 
 module.exports = {
   fetchChatrooms,
@@ -289,4 +384,5 @@ module.exports = {
   sendChatMessageFromAdministration,
   removeMessage,
   fetchChatRoomUsers,
+  deleteConversation,
 };

@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { JWT_ACCESS_TOKEN_KEY } = require("../config/constants");
+const { getUserById } = require("../services/user.service");
 
 const signJwt = async (payload, secret, { expiresIn }) => {
   var token = await jwt.sign(payload, secret, {
@@ -8,11 +9,14 @@ const signJwt = async (payload, secret, { expiresIn }) => {
   });
   return token;
 };
-
+const findUser = async (accessToken) => {
+  const valid = await verifyJwt(accessToken, JWT_ACCESS_TOKEN_KEY);
+  const user = valid ? await getUserById(valid.id) : null;
+  return user.user ? user.user : null;
+};
 const verifyJwt = async (token, secret) => {
   try {
     const decoded = await jwt.verify(token, secret);
-    console.log(decoded)
     return decoded;
   } catch (error) {
     return null;
@@ -25,8 +29,10 @@ const hashPassword = async (password) => {
   return hashedPassword;
 };
 
+
 module.exports = {
   signJwt,
   verifyJwt,
   hashPassword,
+  findUser
 };

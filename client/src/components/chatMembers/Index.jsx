@@ -1,23 +1,39 @@
 import React, { useState } from 'react'
 
 import { AiFillCloseSquare } from 'react-icons/ai'
+import { IoIosRemoveCircle } from 'react-icons/io'
 import { BsDot } from 'react-icons/bs'
 import { Link, useNavigate } from 'react-router-dom'
-import { useChatContext } from '../../context'
+import { useAuthContext, useChatContext } from '../../context'
 import { v4 as uuidv4 } from 'uuid';
 
 import styles from './styles.module.css'
+import { useMutation } from '@apollo/client'
+import { FETCH_CHATROOM_MESSAGES, REMOVE_CHAT_ROOMGROUP_MEMBERS } from '../../graphql/chat'
 
 
 const MembersModal = ({ setMembersModalIsOpen }) => {
-    const [userSearch, setUserSearch] = useState("")
-    const { chatState: { currentChatroom } } = useChatContext()
     let navigate = useNavigate();
 
+    const [userSearch, setUserSearch] = useState("")
+    const { chatState: { currentChatroom } } = useChatContext()
+    const { userState: { user } } = useAuthContext()
+
+
+
+    const [removeMembers, { data, loading, error }] = useMutation(REMOVE_CHAT_ROOMGROUP_MEMBERS, {
+        refetchQueries: FETCH_CHATROOM_MESSAGES
+    });
+
+    const isAdminOrModerator = user?.roles?.includes("ADMIN") || user?.roles?.includes("MODEARTOR")
 
     const navigateToChat = (url) => {
         setMembersModalIsOpen(false)
         navigate(url);
+    }
+
+    const removeChatroomMembersHandler = (data) => {
+        removeMembers(data)
     }
 
     return (
@@ -29,8 +45,8 @@ const MembersModal = ({ setMembersModalIsOpen }) => {
                     currentChatroom?.users?.filter(u => u.username.toLowerCase().includes(userSearch.toLowerCase())).map((u) => {
                         const param = uuidv4()
                         return (
-                            <div onClick={() => navigateToChat(`/chat/${param}${u.id}`)} className={styles.user} key={u.id}>
-                                <div className={styles.left}>
+                            <div className={styles.user} key={u.id}>
+                                <div className={styles.left} onClick={() => navigateToChat(`/chat/${u.id}`)}>
                                     <div className={styles.avatar}>
                                         <img width={"20px"} src={u.profile_img} alt="avatar" />
                                     </div>
@@ -39,7 +55,22 @@ const MembersModal = ({ setMembersModalIsOpen }) => {
                                     </div>
                                 </div>
                                 <div className={styles.right}>
-                                    <BsDot />
+                                    {
+                                        isAdminOrModerator && <IoIosRemoveCircle className={styles.removeUserIcon} onClick={() => removeChatroomMembersHandler({
+                                            variables: {
+                                                userId: user.id,
+                                                chatroomId: currentChatroom.id,
+                                                removeChatRoomGroupMemberInput: [
+                                                    {
+                                                        id: u.id,
+                                                        username: u.username,
+                                                    }
+                                                ]
+                                            }
+                                        })} />
+                                    }
+
+                                    <BsDot className={styles.activeStatusIcon} />
                                 </div>
                             </div>
 

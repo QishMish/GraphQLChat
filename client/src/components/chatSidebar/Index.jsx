@@ -1,18 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import { Link } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid';
 
-import { CREATE_CHATROOM, FETCH_CHATROOMS, GET_USERS } from '../../graphql/chat'
+import { CREATE_CHATROOM, DELETE_CONVERSATION, FETCH_CHATROOMS, GET_USERS } from '../../graphql/chat'
 import { useAuthContext, useChatContext } from '../../context'
-
-//components
 import Loading from '../loading/Index'
 
-//icons
 import { MdGroups, MdDoneOutline } from 'react-icons/md'
 import { BiSearch } from 'react-icons/bi'
 import { IoCreateOutline } from 'react-icons/io5'
+import { RiDeleteBack2Line } from 'react-icons/ri'
 
 import styles from './styles.module.css'
 
@@ -22,11 +20,10 @@ const ChatSidebar = () => {
 	const [chatroomName, setChatroomName] = useState("")
 	const [selectedUsers, setSelectedUsers] = useState([])
 
-
 	const { setChatroomsHandler, setChatUsersHandler, chatState: { chatrooms, chatUsers } } = useChatContext()
 	const { userState: { user } } = useAuthContext()
 
-	const { loading, error, data } = useQuery(FETCH_CHATROOMS, {
+	const [loadChatrooms, { _, loading: loadChatroomsLoading, data: loadChatroomsData }] = useLazyQuery(FETCH_CHATROOMS, {
 		onCompleted: (data) => {
 			console.log(data);
 			setChatroomsHandler(data.fetchChatrooms)
@@ -44,7 +41,7 @@ const ChatSidebar = () => {
 	}
 	);
 	const [createChatroom, { data: createChatroomData, loading: createChatroomLoading, error: createChatroomError }] = useMutation(CREATE_CHATROOM, { refetchQueries: [{ query: FETCH_CHATROOMS }] });
-
+	const [deleteConversation, { data: deleteConversationData, loading: deleteConversationLoading, error: deleteConversationError }] = useMutation(DELETE_CONVERSATION, { refetchQueries: [{ query: FETCH_CHATROOMS }] });
 
 	const setAddChatRoomModalIsOpenHandler = () => {
 		setAddChatRoomModalIsOpen((prev) => !prev)
@@ -52,6 +49,15 @@ const ChatSidebar = () => {
 			loadUsers()
 		}
 	}
+	useEffect(() => {
+		loadUsers()
+	}, [])
+
+	useEffect(() => {
+		loadChatrooms()
+	}, [])
+
+
 	const selectUserHandler = (e) => {
 		const id = e.target.id
 		const username = e.target.value
@@ -71,7 +77,6 @@ const ChatSidebar = () => {
 		})
 	}
 	const discardUserHandler = (id) => setSelectedUsers(selectedUsers.filter(item => Number(item.id) !== Number(id)))
-
 	const completeChatroomCreation = () => {
 		if (!chatroomName) {
 			return
@@ -85,7 +90,7 @@ const ChatSidebar = () => {
 				}
 			}
 		})
-		selectedUsers([])
+		setSelectedUsers([])
 		setChatroomName("")
 		setAddChatRoomModalIsOpen(false)
 	}
@@ -104,7 +109,7 @@ const ChatSidebar = () => {
 								loadUsersLoading && <p>...</p>
 							}
 							{
-								chatUsers?.map((u, i) => {
+								chatUsers?.filter((u) => Number(u.id) !== Number(user.id))?.map((u, i) => {
 									return (
 										<div className={styles.user} key={i}>
 											<input type="checkbox" id={u.id} name="user" onChange={selectUserHandler} value={u.username} />
@@ -120,9 +125,8 @@ const ChatSidebar = () => {
 					</div>
 				)
 			}
-
 			{
-				loading ? (
+				loadUsersLoading ? (
 					<Loading />
 				) : (
 					// <div className={styles.chatSidebar}>
@@ -136,7 +140,7 @@ const ChatSidebar = () => {
 					<div className={styles.conversations}>
 						{
 							chatrooms?.map((conversation, index) => {
-								let param = conversation.type == "ONE_TO_ONE" ? conversation.users.find(u => Number(u.id) !== user.id)?.username : conversation.name
+								let param = conversation?.type == "ONE_TO_ONE" ? conversation?.users.find(u => Number(u.id) !== user.id)?.username : conversation.name
 
 								// const manyToManyChatroom = chatrooms?.find((chatroom) => chatroom.name === param)
 								// const oneToOneChatroom = chatrooms?.find((chatroom) => {
@@ -149,9 +153,8 @@ const ChatSidebar = () => {
 
 								param = uuidv4().concat(conversation.id)
 								const conversationSlug = conversation.type === "MANY_TO_MANY" ? `Chatroom:${conversation.name}` : conversation.users.find(u => Number(u.id) !== user.id)?.username
-
 								return (
-									<Link to={param} className={styles.conversation} key={index}>
+									<Link to={conversation.id} className={styles.conversation} key={index}>
 										<div className={styles.left}>
 											<img className={styles.avatar} src={conversation.avatar ? conversation.avatar : "https://cswnn.edu.in/system/files/2021-02/avatar-png-1-original.png"} alt={conversation.username} />
 										</div>
@@ -173,6 +176,11 @@ const ChatSidebar = () => {
 											<span>{conversation.lastMessage ? conversation.lastMessage : "bye"}</span>
 										</div>
 										<div className={styles.right}>
+											<RiDeleteBack2Line className={styles.removeChatroomIcon} onClick={() => deleteConversation({
+												variables: {
+													chatroomId: conversation.id
+												}
+											})} />
 											<span className={styles.lastMessageSentTime}>{conversation.lastMessageSent ? conversation.lastMessageSent : "21:01"}</span>
 											<span className={conversation.unSeenMessages < 1 ? styles.none : styles.unSeenMessages}>{conversation.unSeenMessages ? conversation.unSeenMessages : 1}</span>
 										</div>
@@ -181,14 +189,12 @@ const ChatSidebar = () => {
 							})
 						}
 					</div>
-
 					// 		</div>
 					// 	</div>
 					// </div>
 				)
 			}
 		</>
-
 	)
 }
 

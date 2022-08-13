@@ -24,6 +24,12 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: "chatroom_id",
         as: "chatrooms",
       });
+      this.belongsToMany(models.Chatroom, {
+        through: "deleted_user_chatrooms",
+        foreignKey: "user_id",
+        otherKey: "chatroom_id",
+        as: "deleted_chatrooms",
+      });
       this.belongsToMany(models.Role, {
         through: "user_roles",
         as: "roles",

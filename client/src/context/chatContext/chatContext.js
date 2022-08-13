@@ -1,3 +1,4 @@
+import { useSubscription } from "@apollo/client";
 import React, {
   useContext,
   createContext,
@@ -5,9 +6,13 @@ import React, {
   useEffect,
   useReducer,
 } from "react";
+import { SUBSUCRIBE_TO_NEW_USER_JOIN } from "../../graphql/chat";
+import jwtDecode from "jwt-decode";
 import {
+  addActiveUser,
   addMessage,
   handleDeletedMessage,
+  setActiveUsers,
   setChatrooms,
   setChatUsers,
   setCurrentChatroom,
@@ -18,12 +23,31 @@ import { chatReducer } from "./chatReducer";
 
 const chatContext = createContext();
 
-const CHAT_INITIAL_STATE = {
+let CHAT_INITIAL_STATE = {
   chatrooms: [],
   currentChatroom: {},
   messages: [],
   chatUsers: [],
+  activeUsers: [],
 };
+
+const accessToken = localStorage.getItem("access_token");
+
+if (accessToken) {
+  const decoded = jwtDecode(accessToken);
+
+  if (decoded.exp * 1000 < Date.now()) {
+    localStorage.removeItem("access_token");
+  }
+} else {
+  CHAT_INITIAL_STATE = {
+    chatrooms: [],
+    currentChatroom: {},
+    messages: [],
+    chatUsers: [],
+    activeUsers: [],
+  };
+}
 
 export default function ChatProvider(props) {
   const [chatState, dispatchChat] = useReducer(chatReducer, CHAT_INITIAL_STATE);
@@ -46,6 +70,12 @@ export default function ChatProvider(props) {
   const deletedMessageHandler = (message) => {
     dispatchChat(handleDeletedMessage(message));
   };
+  const setActiveUsersHandler = (users) => {
+    dispatchChat(setActiveUsers(users));
+  };
+  const addActiveUserHandler = (user) => {
+    dispatchChat(addActiveUser(user));
+  };
   return (
     <chatContext.Provider
       value={{
@@ -57,6 +87,8 @@ export default function ChatProvider(props) {
         setChatUsersHandler: setChatUsersHandler,
         setCurrentChatroomHandler: setCurrentChatroomHandler,
         deletedMessageHandler: deletedMessageHandler,
+        setActiveUsersHandler: setActiveUsersHandler,
+        addActiveUserHandler: addActiveUserHandler,
       }}
     >
       {props.children}
