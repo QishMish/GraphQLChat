@@ -70,8 +70,9 @@ const serverCleanup = useServer(
         id: user.id,
         username: user.username,
       });
+      const activeUsers = JSON.parse(await client.get("activeUsers"));
       pubsub.publish("ACTIVE_USERS", {
-        activeUsers: JSON.parse(await client.get("activeUsers")),
+        activeUsers: activeUsers,
       });
       console.log("Connected");
     },
@@ -87,8 +88,11 @@ const serverCleanup = useServer(
         id: user.id,
         username: user.username,
       });
+      
+      const activeUsers = JSON.parse(await client.get("activeUsers"));
+
       pubsub.publish("ACTIVE_USERS", {
-        activeUsers: JSON.parse(await client.get("activeUsers")),
+        activeUsers: activeUsers,
       });
       console.log("Disconnected!");
     },

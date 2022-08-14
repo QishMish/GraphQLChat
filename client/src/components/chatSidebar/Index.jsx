@@ -25,7 +25,6 @@ const ChatSidebar = () => {
 
 	const [loadChatrooms, { _, loading: loadChatroomsLoading, data: loadChatroomsData }] = useLazyQuery(FETCH_CHATROOMS, {
 		onCompleted: (data) => {
-			console.log(data);
 			setChatroomsHandler(data.fetchChatrooms)
 		},
 		onError: (error) => {
@@ -35,7 +34,6 @@ const ChatSidebar = () => {
 	const [loadUsers, { called, loading: loadUsersLoading, data: loadUsersData }] = useLazyQuery(
 		GET_USERS, {
 		onCompleted: (data) => {
-			console.log(data);
 			setChatUsersHandler(data.getUsers)
 		},
 	}

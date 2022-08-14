@@ -135,7 +135,6 @@ const activateUser = async (userId) => {
 
 const setUserActive = async (user) => {
   let redisActiveUsers = JSON.parse(await client.get("activeUsers"));
-  console.log(redisActiveUsers)
   const exist = redisActiveUsers?.find(
     (u) => u.id === user.id && u.username == user.username
   );
@@ -143,15 +142,11 @@ const setUserActive = async (user) => {
   if (exist) {
     return;
   }
-  console.log(redisActiveUsers)
-  console.log(user)
   redisActiveUsers.push(user);
-  console.log(redisActiveUsers)
   await client.set("activeUsers", JSON.stringify(redisActiveUsers));
 };
 
 const disconnectUser = async (user) => {
-  console.log(user,"afafafqfq")
   let redisActiveUsers = JSON.parse(await client.get("activeUsers"));
   const exist = redisActiveUsers?.find(
     (u) => u.id === user.id && u.username === user.username
@@ -161,13 +156,11 @@ const disconnectUser = async (user) => {
     redisActiveUsers = redisActiveUsers?.filter(
       (u) => u.id !== user.id && u.username !== user.username
     );
-    console.log(redisActiveUsers)
     await client.set("activeUsers", JSON.stringify(redisActiveUsers));
   } else return;
 };
 const getActiveUsers = async (userId) => {
   redisActiveUsers = JSON.parse(await client.get("activeUsers"));
-  console.log(userId,"dadafa")
   return redisActiveUsers.filter((u => Number(u.id) !== Number(userId)));
 };
 

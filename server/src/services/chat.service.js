@@ -27,13 +27,11 @@ const fetchChatrooms = async (userId) => {
   const user = await User.findByPk(userId);
 
   const userChatrooms = await user.getChatrooms();
-  console.log(userChatrooms[0]);
 
   const userChatroomIds = userChatrooms.map((c) => c.id);
 
   const exludeChatroomIds = deletedChatroom.map((c) => c.chatroom_id);
 
-  console.log(exludeChatroomIds);
 
   const chatrooms = await Chatroom.findAll({
     where: {
@@ -131,8 +129,6 @@ const fetchChatroomMessages = async (userId, chatroomId, offSet, limit) => {
       },
     ],
   });
-  // console.log(chatRoom.messagesCount);
-  console.log(JSON.parse(JSON.stringify(chatRoom)))
   return {
     status: "SUCCESS",
     response: chatRoom,
@@ -266,8 +262,6 @@ const removeChatRoomGroupMembers = async (userId, chatroomId, members) => {
       creator_id: userId,
     },
   });
-  console.log(userId, chatroomId, members);
-
   if (!chatRoom) throw new UserInputError("Invalid creator id or chatroomId");
 
   await Promise.all(
@@ -347,12 +341,8 @@ const deleteConversation = async (userId, chatroomId) => {
       },
     ],
   });
-  console.log(conversation);
 
   const userIn = await conversation.hasUser(user);
-  console.log(userIn);
-  console.log(getMethods(conversation));
-  console.log(await conversation.getUsers());
 
   if (!userIn)
     throw new UserInputError("Incorrect chatroom id or action not allowed");

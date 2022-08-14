@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 
 const ChatSidebarHeader = () => {
   const {
-    userState: { user },
+    userState
   } = useAuthContext();
   return (
     <div className={styles.chatSidebarHeader}>
@@ -16,8 +16,8 @@ const ChatSidebarHeader = () => {
         alt='avatar'
       />
       <div className={styles.content}>
-        <h2>{user.username}</h2>
-        <span>{user.email}</span>
+        <h2>{userState.user.username}</h2>
+        <span>{userState.user.email}</span>
       </div>
     </div>
   );

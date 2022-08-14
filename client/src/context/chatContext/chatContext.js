@@ -12,6 +12,7 @@ import {
   addActiveUser,
   addMessage,
   handleDeletedMessage,
+  resetContext,
   setActiveUsers,
   setChatrooms,
   setChatUsers,
@@ -76,6 +77,9 @@ export default function ChatProvider(props) {
   const addActiveUserHandler = (user) => {
     dispatchChat(addActiveUser(user));
   };
+  const resetContextHandler = () => {
+    dispatchChat(resetContext());
+  };
   return (
     <chatContext.Provider
       value={{
@@ -89,6 +93,7 @@ export default function ChatProvider(props) {
         deletedMessageHandler: deletedMessageHandler,
         setActiveUsersHandler: setActiveUsersHandler,
         addActiveUserHandler: addActiveUserHandler,
+        resetContextHandler: resetContextHandler,
       }}
     >
       {props.children}

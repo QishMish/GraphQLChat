@@ -2,6 +2,7 @@ import {
   ADD_ACTIVE_USER,
   ADD_MESSAGE,
   HANDLE_DELETED_MESSAGE,
+  RESET_CONTEXT,
   SET_ACTIVE_USERS,
   SET_CHATROOMS,
   SET_CHAT_USERS,
@@ -56,5 +57,10 @@ export const addActiveUser = (user) => {
   return {
     type: ADD_ACTIVE_USER,
     payload: user,
+  };
+};
+export const resetContext = () => {
+  return {
+    type: RESET_CONTEXT,
   };
 };

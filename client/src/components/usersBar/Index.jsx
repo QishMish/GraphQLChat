@@ -15,7 +15,7 @@ const UsersBar = () => {
     userState: { user },
   } = useAuthContext();
   const {
-    chatState: { chatUsers },
+    chatState: { chatUsers, activeUsers },
     setChatUsersHandler,
     addActiveUserHandler
   } = useChatContext();
@@ -38,6 +38,7 @@ const UsersBar = () => {
     .sort((a, b) => a.username.localeCompare(b.username))
     ?.map((u, i) => {
       const param = uuidv4().concat(u.id);
+      const isActive = activeUsers?.find(au => Number(au.id) === Number(u.id))
 
       if (u.username.charAt(0) !== previousChar) {
         previousChar = u.username.charAt(0);
@@ -50,9 +51,9 @@ const UsersBar = () => {
             </div>
             <div className={styles.userList}>
               <div className={styles.username}>{u.username}</div>
-              <div className={styles.status}>
+              {isActive && <div className={styles.status}>
                 <HiStatusOnline />
-              </div>
+              </div>}
             </div>
           </div>
         );
@@ -60,9 +61,9 @@ const UsersBar = () => {
         return (
           <div className={styles.userList} key={i}>
             <div className={styles.username}>{u.username}</div>
-            <div className={styles.status}>
+            {isActive && <div className={styles.status}>
               <HiStatusOnline />
-            </div>
+            </div>}
           </div>
         );
       }

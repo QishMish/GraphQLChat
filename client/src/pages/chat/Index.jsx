@@ -9,20 +9,19 @@ import UsersBar from '../../components/usersBar/Index';
 import ChatSidebarLayout from '../../components/chatSidebarLayout';
 import { useSidebarContext } from '../../context/sidebarContext/sidebarContext';
 import { useLazyQuery, useQuery, useSubscription } from '@apollo/client';
-import { FETCH_ACTIVE_USERS, SUBSUCRIBE_TO_NEW_USER_JOIN } from '../../graphql/chat';
-import { useChatContext } from '../../context';
+import { FETCH_ACTIVE_USERS, SUBSCRIBE_TO_ACTIVE_USERS } from '../../graphql/chat';
+import { useAuthContext, useChatContext } from '../../context';
 
 const Chat = () => {
 
   const { sidebarState: { current } } = useSidebarContext()
   const { setActiveUsersHandler, addActiveUserHandler } = useChatContext()
-
+  const { userState: { user } } = useAuthContext()
 
   const [loadActiveUsers, { _, __, ___ }] = useLazyQuery(
     FETCH_ACTIVE_USERS,
     {
       onCompleted: (data) => {
-        console.log(data.fetchActiveUsers)
         setActiveUsersHandler(data.fetchActiveUsers)
       },
       onError: (error) => {
@@ -31,12 +30,13 @@ const Chat = () => {
     }
   );
   const { data: users, loading: userLoading } = useSubscription(
-    SUBSUCRIBE_TO_NEW_USER_JOIN, {
+    SUBSCRIBE_TO_ACTIVE_USERS, {
+    variables: {
+      userId: user.id
+    },
     onSubscriptionData: data => {
-      console.log(data);
-      // setActiveUsersHandler(data.fetchActiveUsers)
-      console.log(data.subscriptionData.data.activeUsers)
-      setActiveUsersHandler(data.subscriptionData.data.activeUsers)
+      const activeUsersData = data.subscriptionData.data.activeUsers?.filter(au => Number(au.id) !== Number(user.id))
+      setActiveUsersHandler(activeUsersData)
     },
     onError: error => {
       console.log(error);
@@ -46,9 +46,7 @@ const Chat = () => {
 
   useEffect(() => {
     loadActiveUsers()
-  }, [])
-
-
+  }, [current])
 
   const getElement = (el) => {
     switch (el) {

@@ -40,7 +40,6 @@ const ChatBody = () => {
         chatroomId: chatroomId
       },
       onSubscriptionData: (data) => {
-        console.log(data);
         addMessagesHandler(data.subscriptionData.data.onNewMessageCreated);
       },
     }

@@ -11,7 +11,7 @@ const userMutation = {
     const { status, access_token, refresh_token, userProps } =
       await authService.signUp(email, username, firstname, lastname, password);
     pubsub.publish("ACTIVE_USERS", {
-      onNewUserJoined: JSON.parse(await client.get("activeUsers")),
+      activeUsers: JSON.parse(await client.get("activeUsers")),
     });
     return { status, access_token, refresh_token };
   },
@@ -22,7 +22,7 @@ const userMutation = {
       await authService.signIn(username, password);
       
     pubsub.publish("ACTIVE_USERS", {
-      onNewUserJoined: JSON.parse(await client.get("activeUsers")),
+      activeUsers: JSON.parse(await client.get("activeUsers")),
     });
     return { status, access_token, refresh_token };
   },

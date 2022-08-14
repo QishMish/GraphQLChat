@@ -137,9 +137,9 @@ export const REMOVE_CHAT_ROOMGROUP_MEMBERS = gql`
     }
   }
 `;
-export const SUBSUCRIBE_TO_NEW_USER_JOIN = gql`
-  subscription ActiveUsers {
-    activeUsers {
+export const SUBSCRIBE_TO_ACTIVE_USERS = gql`
+  subscription ActiveUsers($userId: ID!) {
+    activeUsers(userId: $userId) {
       username
       id
     }

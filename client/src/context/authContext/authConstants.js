@@ -1,3 +1,3 @@
-export const SIGN_IN = "REGISTER";
-export const SIGN_UP = "REGISTER";
-export const SIGN_OUT = "REGISTER";
+export const SIGN_IN = "SIGN_IN";
+export const SIGN_UP = "SIGN_UP";
+export const SIGN_OUT = "SIGN_OUT";

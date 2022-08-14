@@ -58,5 +58,5 @@ type Mutation {
 type Subscription {
   onNewMessageCreated(chatroomId: ID!): Message
   onMessageDeleted(chatroomId: ID!): Message
-  activeUsers: [UserDto]
+  activeUsers(userId: ID!): [UserDto]
 }
