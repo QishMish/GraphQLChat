@@ -74,7 +74,7 @@
   flex-direction: column;
   align-items: center;
   width: 90%;
-  height: 140px;
+  max-height: 140px;
   overflow-y: scroll;
 }
 .addChatroomOptions input {
@@ -175,6 +175,8 @@
   justify-content: center;
   gap: 5px;
   width: 100%;
+  position: relative;
+  padding-right: 5px;
 }
 
 .lastMessageSentTime {
@@ -195,4 +197,18 @@
 }
 .none {
   opacity: 0;
+}
+.removeChatroomIcon {
+  color: #fe5366;
+  position: absolute;
+  top: 10px;
+  transform: translateY(-50%);
+  right: -20px;
+  opacity: 0;
+}
+.conversation:hover > .right .removeChatroomIcon {
+  opacity: 1;
+}
+.none {
+  display: none;
 }

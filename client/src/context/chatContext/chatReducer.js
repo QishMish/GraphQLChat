@@ -5,6 +5,9 @@ import {
   SET_CHAT_USERS,
   SET_CURRENT_CHATROOM,
   HANDLE_DELETED_MESSAGE,
+  SET_ACTIVE_USERS,
+  ADD_ACTIVE_USER,
+  RESET_CONTEXT,
 } from "./chatConstants";
 
 export const chatReducer = (state, action) => {
@@ -35,7 +38,6 @@ export const chatReducer = (state, action) => {
         currentChatroom: action.payload,
       };
     case HANDLE_DELETED_MESSAGE:
-      console.log(action.payload)
       const newMessages = state.messages.map((msg) => {
         if (Number(msg.id) === action.payload.id) {
           return {
@@ -48,6 +50,33 @@ export const chatReducer = (state, action) => {
       return {
         ...state,
         messages: newMessages,
+      };
+    case SET_ACTIVE_USERS:
+      return {
+        ...state,
+        activeUsers: action.payload,
+      };
+    case ADD_ACTIVE_USER:
+      const exist = state.activeUsers.find(
+        (u) => Number(u.id) === Number(action.payload.id)
+      );
+      if (exist) {
+        return {
+          ...state,
+        };
+      }
+      return {
+        ...state,
+        activeUsers: [...state.activeUsers, action.payload],
+      };
+    case RESET_CONTEXT:
+      return {
+        ...state,
+        chatrooms: [],
+        currentChatroom: {},
+        messages: [],
+        chatUsers: [],
+        activeUsers: [],
       };
     default:
       return state;

@@ -35,7 +35,7 @@ module.exports = {
         },
         {
           name: "chatroom5",
-          type: "ONE_TO_ONE",
+          type: "MANY_TO_MANY",
           creator_id: 3,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

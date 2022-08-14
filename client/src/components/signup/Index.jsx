@@ -24,7 +24,6 @@ const SignUp = () => {
 
   const [signUp, { data, loading, error }] = useMutation(SIGN_UP_USER, {
     onCompleted: (data) => {
-      console.log(data);
       localStorage.setItem("access_token", data.signUpUser.access_token)
       localStorage.setItem("refresh_token", data.signUpUser.refresh_token)
       onSignUp(data.signUpUser.access_token)
@@ -46,17 +45,13 @@ const SignUp = () => {
   });
 
   const signUpHandler = async (data) => {
-    console.log(data);
-
     await signUp({
       variables: {
         signUpUserInput: data
       }
     })
-    console.log("success register");
   }
   const handleEmailValidation = email => {
-    console.log("ValidateEmail was called with", email);
     const isValid = isValidEmail(email);
     const validityChanged =
       (errors?.email && isValid) || (!errors?.email && !isValid);

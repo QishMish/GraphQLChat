@@ -7,6 +7,7 @@ module.exports = {
     database: DB_NAME,
     host: DB_HOST || "127.0.0.1",
     dialect: "postgres",
+    logging: false
   },
   test: {
     username: DB_USERNAME,

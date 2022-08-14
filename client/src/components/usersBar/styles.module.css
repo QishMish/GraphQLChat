@@ -3,10 +3,9 @@
   flex-direction: column;
   justify-content: start;
   width: 90%;
-  padding: 20px 10px;  
+  padding: 20px 10px;
   height: 100%;
   overflow-y: scroll;
- 
 }
 .albhabet {
   font-size: 20px;
@@ -23,9 +22,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 5px 0;
 }
 .status {
   color: rgb(2, 179, 120);
   font-size: 20px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

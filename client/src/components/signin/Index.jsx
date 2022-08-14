@@ -20,7 +20,6 @@ const SignIn = () => {
 
   const [signIn, { data, loading, error }] = useMutation(SIGN_IN_USER, {
     onCompleted: (data) => {
-      console.log(data);
       localStorage.setItem("access_token", data.signInUser.access_token)
       localStorage.setItem("refresh_token", data.signInUser.refresh_token)
       onSignIn(data.signInUser.access_token)
@@ -38,9 +37,6 @@ const SignIn = () => {
     }
   });
 
-
-
-
   const signInHandler = async (data) => {
     console.log(errors);
     await signIn({
@@ -48,7 +44,6 @@ const SignIn = () => {
         signInUserInput: data
       }
     })
-    console.log("success login");
   }
 
   return (

@@ -22,7 +22,6 @@ const Message = ({ message, position, index }) => {
 
     useEffect(() => {
         document.body.addEventListener('click', resetOptionModalState);
-
         return () => {
             window.removeEventListener('click', resetOptionModalState);
         }
@@ -39,8 +38,6 @@ const Message = ({ message, position, index }) => {
         if (!Number(authorId) === Number(user.id)) {
             return
         }
-        console.log("object");
-
         deleteMessage({
             variables: {
                 messageId: id

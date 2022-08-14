@@ -35,10 +35,7 @@ export default function AuthProvider(props) {
     if (accessToken) {
       const decoded = jwtDecode(accessToken);
       dispatchUser(
-        signUp({
-          type: SIGN_UP,
-          payload: decoded,
-        })
+        signUp(decoded)
       );
     }
   };
@@ -46,12 +43,7 @@ export default function AuthProvider(props) {
   const onSignIn = (accessToken) => {
     if (accessToken) {
       const decoded = jwtDecode(accessToken);
-      dispatchUser(
-        signIn({
-          type: SIGN_IN,
-          payload: decoded,
-        })
-      );
+      dispatchUser(signIn(decoded));
     }
   };
   const onLogOut = () => {

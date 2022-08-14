@@ -17,6 +17,7 @@ const {
 const { getMethods } = require("../utils/helper");
 
 const { ResourceNotFoundError } = require("../errors/ApiError");
+const { setUserActive } = require("./user.service");
 
 const signUp = async (email, username, firstname, lastname, password) => {
   const user = await User.create({
@@ -44,10 +45,19 @@ const signUp = async (email, username, firstname, lastname, password) => {
 
   await user.addRefreshToken(refreshToken);
 
+  // await setUserActive({
+  //   id: user.id,
+  //   username: user.username,
+  // });
+
   return {
     status: "SUCCESS",
     access_token,
     refresh_token,
+    userProps: {
+      id: user.id,
+      username: user.username,
+    },
   };
 };
 const signIn = async (username, password) => {
@@ -81,10 +91,19 @@ const signIn = async (username, password) => {
 
   await user.addRefreshToken(refreshToken);
 
+  // await setUserActive({
+  //   id: user.id,
+  //   username: user.username,
+  // });
+
   return {
     status: "SUCCESS",
     access_token,
     refresh_token,
+    userProps: {
+      id: user.id,
+      username: user.username,
+    },
   };
 };
 const signOut = async (userId, token) => {
@@ -101,10 +120,7 @@ const signOut = async (userId, token) => {
   };
 };
 const refreshAccessToken = async (refreshToken) => {
-  const decoded = await verifyJwt(
-    refreshToken,
-    JWT_REFRESH_TOKEN_KEY
-  );
+  const decoded = await verifyJwt(refreshToken, JWT_REFRESH_TOKEN_KEY);
   if (!decoded) throw new ForbiddenError("Could not refresh access token");
 
   const token = await RefreshToken.findOne({
@@ -129,11 +145,9 @@ const refreshAccessToken = async (refreshToken) => {
     ],
   });
 
-  const found = user?.refreshTokens.some(
-    (rfToken) => {
-      return rfToken.refresh_token === refreshToken
-    }
-  );
+  const found = user?.refreshTokens.some((rfToken) => {
+    return rfToken.refresh_token === refreshToken;
+  });
 
   if (!found) throw new ForbiddenError("Invalid refresh token");
 
@@ -160,8 +174,7 @@ const refreshAccessToken = async (refreshToken) => {
 const signTokens = async (user) => {
   const roles = user.roles ? user.roles.map((role) => role.role) : ["USER"];
   // Create access token
-  console.log(JWT_ACCESS_TOKEN_EXPIRES_IN * 60 * 1000);
-  console.log(JWT_REFRESH_TOKEN_EXPIRES_IN * 60 * 1000);
+
   const access_token = await signJwt(
     {
       id: user.id,
@@ -174,7 +187,7 @@ const signTokens = async (user) => {
     JWT_ACCESS_TOKEN_KEY,
     {
       // expiresIn: JWT_ACCESS_TOKEN_EXPIRES_IN * 60 * 1000,
-      expiresIn: "30m",
+      expiresIn: "1d",
     }
   );
 
