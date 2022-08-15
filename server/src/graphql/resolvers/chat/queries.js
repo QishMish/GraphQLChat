@@ -17,6 +17,7 @@ const chatQueries = {
     );
     return usersResponse.response;
   },
+
 };
 
 module.exports = { chatQueries };

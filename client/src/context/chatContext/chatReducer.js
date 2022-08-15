@@ -8,6 +8,7 @@ import {
   SET_ACTIVE_USERS,
   ADD_ACTIVE_USER,
   RESET_CONTEXT,
+  SET_LAST_MESSAGE,
 } from "./chatConstants";
 
 export const chatReducer = (state, action) => {
@@ -26,6 +27,10 @@ export const chatReducer = (state, action) => {
       return {
         ...state,
         messages: [...state.messages, action.payload],
+        currentChatroom: {
+          ...state.currentChatroom,
+          messages: [...state.currentChatroom.messages, action.payload],
+        },
       };
     case SET_CHAT_USERS:
       return {
@@ -38,8 +43,9 @@ export const chatReducer = (state, action) => {
         currentChatroom: action.payload,
       };
     case HANDLE_DELETED_MESSAGE:
+      console.log(action.payload)
       const newMessages = state.messages.map((msg) => {
-        if (Number(msg.id) === action.payload.id) {
+        if (Number(msg.id) === Number(action.payload.id)) {
           return {
             ...msg,
             content: action.payload.content,
@@ -77,6 +83,24 @@ export const chatReducer = (state, action) => {
         messages: [],
         chatUsers: [],
         activeUsers: [],
+      };
+    case SET_LAST_MESSAGE:
+      const chatroom = state.chatrooms.map((c) => {
+        if (Number(c.id) === Number(action.payload.chatroomId)) {
+          return {
+            ...c,
+            last_message: action.payload.lastMessage,
+          };
+        }
+        return c;
+      });
+      return {
+        ...state,
+        chatrooms: chatroom,
+        currentChatroom: {
+          ...state.currentChatroom,
+          last_message: action.payload.lastMessage,
+        },
       };
     default:
       return state;

@@ -5,8 +5,9 @@ const {
   DeletedUserChatroom,
   Message,
   Sequelize,
-  sequelize
+  sequelize,
 } = require("../models");
+const { QueryTypes } = require("sequelize");
 const { Op, where } = require("sequelize");
 const { getMethods } = require("../utils/helper");
 const {
@@ -31,7 +32,6 @@ const fetchChatrooms = async (userId) => {
   const userChatroomIds = userChatrooms.map((c) => c.id);
 
   const exludeChatroomIds = deletedChatroom.map((c) => c.chatroom_id);
-
 
   const chatrooms = await Chatroom.findAll({
     where: {
@@ -77,6 +77,7 @@ const fetchChatroomMessages = async (userId, chatroomId, offSet, limit) => {
     user_id: userId,
     chatroom_id: chatroomId,
   });
+  console.log(chatroomId, "faaaaaaaaaaaaaaaaaaaaa");
 
   // let lastMessage = 0;
 
@@ -89,22 +90,22 @@ const fetchChatroomMessages = async (userId, chatroomId, offSet, limit) => {
       id: chatroomId,
     },
     // attributes: {
-      // include: [
-        // [
-        //   Sequelize.literal(`(SELECT COUNT(*) FROM messages AS msg
-        //     WHERE
-        //     msg.chatroom_id = ${chatroomId}
-        //  )`),
-        //   "messagesCount",
-        // ],
-        // [
-        //   Sequelize.literal(`(SELECT content FROM messages AS msg
-        //       WHERE
-        //       msg.chatroom_id = ${chatroomId} LIMIT 1
-        //    )`),
-        //   "lastMessage",
-        // ],
-      // ],
+    // include: [
+    // [
+    //   Sequelize.literal(`(SELECT COUNT(*) FROM messages AS msg
+    //     WHERE
+    //     msg.chatroom_id = ${chatroomId}
+    //  )`),
+    //   "messagesCount",
+    // ],
+    // [
+    //   Sequelize.literal(`(SELECT content FROM messages AS msg
+    //       WHERE
+    //       msg.chatroom_id = ${chatroomId} LIMIT 1
+    //    )`),
+    //   "lastMessage",
+    // ],
+    // ],
     // },
     include: [
       {
@@ -113,7 +114,7 @@ const fetchChatroomMessages = async (userId, chatroomId, offSet, limit) => {
         // },
         model: Message,
         as: "messages",
-        limit: limit,
+        // limit: limit,
         order: [["createdAt", "DESC"]],
 
         include: [
@@ -151,19 +152,22 @@ const fetchChatRoomUsers = async (chatroomId) => {
   };
 };
 const sendNewMessage = async (userId, chatroomId, newMessageInput) => {
-  const user = await User.findOne({
-    where: {
-      id: userId,
-    },
-  });
+  const user = await User.findByPk(userId);
 
   if (!user) throw new ResourceNotFoundError("User not found");
+  
+  const chatroom = await Chatroom.findByPk(chatroomId);
+
+  if (!chatroom) throw new UserInputError("Chatroom not found");
 
   const message = await Message.create({
     content: newMessageInput.content,
     author_id: user.id,
     chatroom_id: chatroomId,
   });
+  chatroom.last_message = message.content;
+
+  await chatroom.save();
 
   const messageWithAuthor = await Message.findOne({
     where: {
@@ -361,6 +365,54 @@ const deleteConversation = async (userId, chatroomId) => {
     last_message_id: lastMessageId,
   });
 };
+const createChatroom = async (userId, memberId, type = "ONE_TO_ONE") => {
+  const users = await Promise.all(
+    [userId, memberId].map(async (id) => {
+      const user = await User.findByPk(id);
+      if (!user) throw new ResourceNotFoundError("User not found");
+      return user;
+    })
+  );
+  const chatroom = await Chatroom.create({
+    name: new Date().toISOString(),
+    type: type,
+    creator_id: userId,
+  });
+
+  await Promise.all(
+    users.map(async (u) => {
+      await chatroom.addUser(u);
+    })
+  );
+
+  return chatroom;
+};
+
+const getConversationByUserIdsOrCreate = async (userId, memberId) => {
+  const [chatroomExist, metadata] = await sequelize.query(
+    `
+    SELECT c.id, c.name FROM chatrooms AS c
+    INNER JOIN user_chatrooms u1 ON u1.chatroom_id = c.id AND u1.user_id = :userId
+    INNER JOIN user_chatrooms u2 ON u2.chatroom_id = c.id AND u2.user_id = :memberId
+    WHERE c.type = 'ONE_TO_ONE'
+    `,
+    {
+      replacements: { userId: Number(userId), memberId: Number(memberId) },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (chatroomExist) {
+    const chatroom = await fetchChatroomMessages(userId, chatroomExist.id);
+    return chatroom;
+  }
+
+  const chatroom = await createChatroom(userId, memberId);
+
+  const chatroomWithMessages = await fetchChatroomMessages(userId, chatroom.id);
+
+  return chatroomWithMessages;
+};
 
 module.exports = {
   fetchChatrooms,
@@ -375,4 +427,5 @@ module.exports = {
   removeMessage,
   fetchChatRoomUsers,
   deleteConversation,
+  getConversationByUserIdsOrCreate,
 };

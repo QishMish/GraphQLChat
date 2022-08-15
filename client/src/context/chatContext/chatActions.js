@@ -7,6 +7,7 @@ import {
   SET_CHATROOMS,
   SET_CHAT_USERS,
   SET_CURRENT_CHATROOM,
+  SET_LAST_MESSAGE,
   SET_MESSAGES,
 } from "./chatConstants";
 
@@ -62,5 +63,11 @@ export const addActiveUser = (user) => {
 export const resetContext = () => {
   return {
     type: RESET_CONTEXT,
+  };
+};
+export const setLastMessage = ({ chatroomId, lastMessage }) => {
+  return {
+    type: SET_LAST_MESSAGE,
+    payload: { chatroomId, lastMessage },
   };
 };

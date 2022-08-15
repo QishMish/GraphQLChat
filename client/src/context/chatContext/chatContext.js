@@ -17,6 +17,7 @@ import {
   setChatrooms,
   setChatUsers,
   setCurrentChatroom,
+  setLastMessage,
   setMessages,
 } from "./chatActions";
 import { SET_CHATROOMS, SET_MESSAGES } from "./chatConstants";
@@ -80,6 +81,9 @@ export default function ChatProvider(props) {
   const resetContextHandler = () => {
     dispatchChat(resetContext());
   };
+  const setLastMessageHanldler = (message) => {
+    dispatchChat(setLastMessage(message));
+  };
   return (
     <chatContext.Provider
       value={{
@@ -94,6 +98,7 @@ export default function ChatProvider(props) {
         setActiveUsersHandler: setActiveUsersHandler,
         addActiveUserHandler: addActiveUserHandler,
         resetContextHandler: resetContextHandler,
+        setLastMessageHanldler:setLastMessageHanldler
       }}
     >
       {props.children}

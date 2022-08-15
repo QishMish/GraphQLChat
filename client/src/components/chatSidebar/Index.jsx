@@ -24,6 +24,7 @@ const ChatSidebar = () => {
 	const { userState: { user } } = useAuthContext()
 
 	const [loadChatrooms, { _, loading: loadChatroomsLoading, data: loadChatroomsData }] = useLazyQuery(FETCH_CHATROOMS, {
+		fetchPolicy: "no-cache",
 		onCompleted: (data) => {
 			setChatroomsHandler(data.fetchChatrooms)
 		},
@@ -54,7 +55,6 @@ const ChatSidebar = () => {
 	useEffect(() => {
 		loadChatrooms()
 	}, [])
-
 
 	const selectUserHandler = (e) => {
 		const id = e.target.id
@@ -137,19 +137,13 @@ const ChatSidebar = () => {
 					// 			</div>
 					<div className={styles.conversations}>
 						{
-							chatrooms?.map((conversation, index) => {
-								let param = conversation?.type == "ONE_TO_ONE" ? conversation?.users.find(u => Number(u.id) !== user.id)?.username : conversation.name
-
-								// const manyToManyChatroom = chatrooms?.find((chatroom) => chatroom.name === param)
-								// const oneToOneChatroom = chatrooms?.find((chatroom) => {
-								// 	const found = chatroom?.users.find(u => u.username === param)
-								// 	if (found) {
-								// 		return found
-								// 	}
-								// })
-								// const chatroomId = manyToManyChatroom ? manyToManyChatroom?.id : oneToOneChatroom?.id
-
-								param = uuidv4().concat(conversation.id)
+							chatrooms?.filter(c => {
+								console.log(c.type === "ONE_TO_ONE" && c.last_message == null);
+								if (c.type === "ONE_TO_ONE" && c.last_message == null) {
+									return false
+								}
+								return true
+							})?.map((conversation, index) => {
 								const conversationSlug = conversation.type === "MANY_TO_MANY" ? `Chatroom:${conversation.name}` : conversation.users.find(u => Number(u.id) !== user.id)?.username
 								return (
 									<Link to={conversation.id} className={styles.conversation} key={index}>
@@ -171,7 +165,7 @@ const ChatSidebar = () => {
 													{conversationSlug}
 												</h4>
 											</div>
-											<span>{conversation.lastMessage ? conversation.lastMessage : "bye"}</span>
+											<span>{conversation.last_message ? conversation.last_message : ""}</span>
 										</div>
 										<div className={styles.right}>
 											<RiDeleteBack2Line className={styles.removeChatroomIcon} onClick={() => deleteConversation({

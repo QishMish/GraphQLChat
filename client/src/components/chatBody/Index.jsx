@@ -8,18 +8,20 @@ import Message from '../message/Index';
 
 const ChatBody = () => {
 
-  const { chatState: { messages }, setMessagesHandler, deletedMessageHandler, addMessagesHandler, setCurrentChatroomHandler } = useChatContext()
+  const { chatState: { messages }, setMessagesHandler, setLastMessageHanldler, deletedMessageHandler, addMessagesHandler, setCurrentChatroomHandler } = useChatContext()
   const { userState: { user } } = useAuthContext()
   const { chatroomId } = useParams();
 
 
-  const [loadChatroomMessages, { called, loading }]
-    = useLazyQuery(FETCH_CHATROOM_MESSAGES, {
+  const { _, __, ___ }
+    = useQuery(FETCH_CHATROOM_MESSAGES, {
       variables: {
         // chatroomId: chatroomId[chatroomId.length - 1]
         chatroomId: chatroomId
       },
+      fetchPolicy: "no-cache",
       onCompleted: (data) => {
+        console.log(data)
         setCurrentChatroomHandler(data.fetchChatroomMessages)
         setMessagesHandler(data.fetchChatroomMessages?.messages)
       },
@@ -28,9 +30,24 @@ const ChatBody = () => {
       }
     });
 
-  useEffect(() => {
-    loadChatroomMessages()
-  }, [loading])
+  // const [loadChatroomMessages, { called, loading }]
+  //   = useLazyQuery(FETCH_CHATROOM_MESSAGES, {
+  //     variables: {
+  //       // chatroomId: chatroomId[chatroomId.length - 1]
+  //       chatroomId: chatroomId
+  //     },
+  //     onCompleted: (data) => {
+  //       setCurrentChatroomHandler(data.fetchChatroomMessages)
+  //       setMessagesHandler(data.fetchChatroomMessages?.messages)
+  //     },
+  //     onError: (error) => {
+  //       console.log(error);
+  //     }
+  //   });
+
+  // useEffect(() => {
+  //   loadChatroomMessages()
+  // }, [])
 
   const { data, loading: subLoading } = useSubscription(
     SUBSCRIBE_TO_CHATROOM_NEW_MESSAGE_CREATION,
@@ -41,6 +58,10 @@ const ChatBody = () => {
       },
       onSubscriptionData: (data) => {
         addMessagesHandler(data.subscriptionData.data.onNewMessageCreated);
+        setLastMessageHanldler({
+          chatroomId,
+          lastMessage: data.subscriptionData.data.onNewMessageCreated.content
+        })
       },
     }
   )

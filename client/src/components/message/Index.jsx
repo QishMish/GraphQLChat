@@ -45,6 +45,7 @@ const Message = ({ message, position, index }) => {
         })
         setOptionModalOpen(false)
     }
+    console.log(position.toString().includes("flexEnd"));
     return (
         <div className={position} key={index}>
             <div className={styles.col}>
@@ -57,7 +58,10 @@ const Message = ({ message, position, index }) => {
                     </div>
                     <div className={styles.options}>
                         <BsEmojiSmile className={styles.optionIcon} />
-                        <BiDotsVerticalRounded id='option' className={styles.optionIcon} onClick={() => setOptionModalOpen((prev) => !prev)} />
+                        {
+                            position.toString().includes("flexEnd") && < BiDotsVerticalRounded id='option' className={styles.optionIcon} onClick={() => setOptionModalOpen((prev) => !prev)} />
+                        }
+
                     </div>
                     <div className={optionModalOpen ? `${styles.optionProps}` : `${styles.optionProps} ${styles.none}`}>
                         <span id="remove" onClick={() => messageDeleteHandler({

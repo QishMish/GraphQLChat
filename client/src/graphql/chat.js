@@ -7,6 +7,7 @@ export const FETCH_CHATROOMS = gql`
       name
       type
       creator_id
+      last_message
       users {
         username
         email
@@ -24,6 +25,7 @@ export const FETCH_CHATROOM_MESSAGES = gql`
       name
       type
       creator_id
+      last_message
       users {
         id
         username
@@ -150,6 +152,35 @@ export const FETCH_ACTIVE_USERS = gql`
     fetchActiveUsers {
       id
       username
+    }
+  }
+`;
+export const GET_CONVERSATION_BY_USERID_OR_CREATE = gql`
+  mutation GetConversationByUserIdsOrCreate($userId: ID!, $memberId: ID!) {
+    getConversationByUserIdsOrCreate(userId: $userId, memberId: $memberId) {
+      id
+      name
+      type
+      creator_id
+      users {
+        id
+        username
+        profile_img
+      }
+      messages {
+        id
+        content
+        createdAt
+        author {
+          id
+          email
+          username
+          verified
+          profile_img
+          isActive
+        }
+        chatroom_id
+      }
     }
   }
 `;
