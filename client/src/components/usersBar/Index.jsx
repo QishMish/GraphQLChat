@@ -4,9 +4,9 @@ import { BiSearch } from 'react-icons/bi';
 import { HiStatusOnline } from 'react-icons/hi';
 import styles from './styles.module.css';
 import { v4 as uuidv4 } from 'uuid';
-import { Link } from 'react-router-dom';
-import { useQuery, useSubscription } from '@apollo/client';
-import { GET_USERS, SUBSUCRIBE_TO_NEW_USER_JOIN } from '../../graphql/chat';
+import { Link, useNavigate } from 'react-router-dom';
+import { useLazyQuery, useMutation, useQuery, useSubscription } from '@apollo/client';
+import { FETCH_CHATROOMS, GET_CONVERSATION_BY_USERID_OR_CREATE, GET_USERS, SUBSUCRIBE_TO_NEW_USER_JOIN } from '../../graphql/chat';
 import { useState } from 'react';
 import { useAuthContext, useChatContext } from '../../context';
 
@@ -19,6 +19,7 @@ const UsersBar = () => {
     setChatUsersHandler,
     addActiveUserHandler
   } = useChatContext();
+  const navigate = useNavigate();
 
   const { loading, error, data } = useQuery(GET_USERS, {
     onCompleted: data => {
@@ -32,6 +33,20 @@ const UsersBar = () => {
     },
   });
 
+
+  const [loadChatroomWithMessages, { _, __, ___ }] = useMutation(GET_CONVERSATION_BY_USERID_OR_CREATE, { refetchQueries: [{ query: FETCH_CHATROOMS }] }
+  );
+
+  const sendNewMessage = async (userId, memberId) => {
+    const data = await loadChatroomWithMessages({ variables: { userId: Number(userId), memberId: Number(memberId) } })
+
+    console.log(data);
+
+    const chatroom = data.data.getConversationByUserIdsOrCreate
+    console.log(chatroom)
+    navigate(`/chat/${chatroom.id}`)
+  }
+
   let previousChar = '';
   const usersList = chatUsers?.filter(u => Number(u.id) !== Number(user.id))
     ?.slice()
@@ -43,7 +58,7 @@ const UsersBar = () => {
       if (u.username.charAt(0) !== previousChar) {
         previousChar = u.username.charAt(0);
         return (
-          <div key={i}>
+          <div key={i} onClick={() => sendNewMessage(user.id, u.id)}>
             <div>
               <div className={styles.albhabet} key={'c' + u.id}>
                 {previousChar}
@@ -59,7 +74,7 @@ const UsersBar = () => {
         );
       } else {
         return (
-          <div className={styles.userList} key={i}>
+          <div className={styles.userList} key={i} onClick={() => sendNewMessage(user.id, u.id)}>
             <div className={styles.username}>{u.username}</div>
             {isActive && <div className={styles.status}>
               <HiStatusOnline />

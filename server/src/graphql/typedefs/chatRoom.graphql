@@ -6,7 +6,7 @@ type ChatRoom {
   messages: [Message]
   # messagesCount: ID
   users: [UserDto]
-  lastMessage: String
+  last_message: String
   creator: UserDto!
 }
 

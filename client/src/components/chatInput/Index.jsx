@@ -7,13 +7,16 @@ import { BsEmojiSmile } from 'react-icons/bs'
 import { AiOutlineSend } from 'react-icons/ai'
 import { MdAttachFile } from 'react-icons/md'
 
-import { SEND_NEW_MESSAGE } from '../../graphql/chat'
+import { FETCH_CHATROOM_MESSAGES, SEND_NEW_MESSAGE } from '../../graphql/chat'
 
 import styles from './styles.module.css'
+import { useChatContext } from '../../context';
 
 const ChatInput = () => {
 
   const { chatroomId } = useParams()
+
+  const { setLastMessageHanldler } = useChatContext()
 
   const [message, setMessage] = useState("")
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
@@ -30,7 +33,8 @@ const ChatInput = () => {
     },
     onError: (error) => {
       console.log(error);
-    }
+    },
+    refetchQueries:FETCH_CHATROOM_MESSAGES
   });
 
   const sendNewMessageHandler = () => {
@@ -38,6 +42,10 @@ const ChatInput = () => {
       setIsOpenEmoji(false);
       sendMessage(message)
       setMessage("")
+      setLastMessageHanldler({
+        chatroomId,
+        lastMessage: message
+      })
     }
     return
   }

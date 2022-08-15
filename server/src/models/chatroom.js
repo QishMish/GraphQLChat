@@ -46,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      last_message: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+      },
     },
     {
       sequelize,

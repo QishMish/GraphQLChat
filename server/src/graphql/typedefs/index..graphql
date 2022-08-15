@@ -46,6 +46,7 @@ type Mutation {
     removeChatRoomGroupMemberInput: [RemoveChatRoomGroupMemberInput!]!
   ): GenericResponse!
   deleteConversation(userId: ID, chatroomId: ID!): GenericResponse!
+  getConversationByUserIdsOrCreate(userId:ID!, memberId:ID!): ChatRoom!
 
   #admin
   sendChatMessageFromAdministration(

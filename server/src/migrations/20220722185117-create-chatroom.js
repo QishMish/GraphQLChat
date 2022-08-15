@@ -22,6 +22,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull:false
       },
+      last_message: {
+        type: Sequelize.STRING,
+        defaultValue: null,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
