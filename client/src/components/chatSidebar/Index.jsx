@@ -138,7 +138,6 @@ const ChatSidebar = () => {
 					<div className={styles.conversations}>
 						{
 							chatrooms?.filter(c => {
-								console.log(c.type === "ONE_TO_ONE" && c.last_message == null);
 								if (c.type === "ONE_TO_ONE" && c.last_message == null) {
 									return false
 								}

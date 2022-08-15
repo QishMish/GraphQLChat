@@ -20,7 +20,7 @@ const schema = applyMiddleware(
     typeDefs,
     resolvers,
   }),
-  // permissions
+  permissions
 );
 
 module.exports = schema;

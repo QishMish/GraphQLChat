@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { useApolloClient } from '@apollo/client';
 import { BsChatSquareTextFill, BsChatLeftText } from 'react-icons/bs'
 import { MdLogout } from 'react-icons/md'
 import { FiUsers } from 'react-icons/fi'
@@ -10,10 +10,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import styles from './styles.module.css'
 import { useSidebarContext } from '../../context/sidebarContext/sidebarContext'
 
-const SideBar = () => {
+const SideBar = (props) => {
   const { onLogOut } = useAuthContext()
   const navigate = useNavigate();
-
+  const client = useApolloClient();
   const { setSidebarCurrentElement } = useSidebarContext()
   const { resetContextHandler } = useChatContext()
 
@@ -26,10 +26,10 @@ const SideBar = () => {
   }
 
   const navigateHome = () => {
+    client.cache.reset()
     navigate('/chat')
     setSidebarCurrentElement("conversations")
   }
-
   return (
     <div className={styles.sidebarContainer}>
       <div className={styles.logo} onClick={navigateHome}>
