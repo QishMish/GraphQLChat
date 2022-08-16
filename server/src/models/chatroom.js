@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       messagesCount: {
         type: DataTypes.VIRTUAL,
       },
-      hasMore: {
+      hasMoreMessages: {
         type: DataTypes.VIRTUAL,
         defaultValue: true,
       },
