@@ -6,6 +6,13 @@ module.exports = {
       "messages",
       [
         {
+          content: "first",
+          author_id:1,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
           content: "hi there",
           author_id:1,
           chatroom_id: 1,
@@ -13,8 +20,141 @@ module.exports = {
           updatedAt:  new Date().toISOString()
         },
         {
+          content: "hi there",
+          author_id:2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:1,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:1,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:1,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:1,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:1,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:1,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:1,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hi there",
+          author_id:2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
           content: "hello",
           author_id: 2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hello",
+          author_id: 2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hello",
+          author_id: 2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hello",
+          author_id: 2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hello",
+          author_id: 1,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "hello",
+          author_id: 2,
+          chatroom_id: 1,
+          createdAt:  new Date().toISOString(),
+          updatedAt:  new Date().toISOString()
+        },
+        {
+          content: "last",
+          author_id: 1,
           chatroom_id: 1,
           createdAt:  new Date().toISOString(),
           updatedAt:  new Date().toISOString()

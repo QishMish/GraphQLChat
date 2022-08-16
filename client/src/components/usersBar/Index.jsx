@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ChatSidebarHeader from '../chatSidebarHeader/Index';
 import { BiSearch } from 'react-icons/bi';
 import { HiStatusOnline } from 'react-icons/hi';
@@ -15,9 +15,11 @@ const UsersBar = () => {
     userState: { user },
   } = useAuthContext();
   const {
-    chatState: { chatUsers, activeUsers },
+    chatState: { chatUsers, activeUsers, searchKeyword },
     setChatUsersHandler,
+    setSeachKeywordHandler,
     addActiveUserHandler
+
   } = useChatContext();
   const navigate = useNavigate();
 
@@ -33,26 +35,26 @@ const UsersBar = () => {
     },
   });
 
+  useEffect(() => {
+    setSeachKeywordHandler("")
+  }, [])
+
+
 
   const [loadChatroomWithMessages, { _, __, ___ }] = useMutation(GET_CONVERSATION_BY_USERID_OR_CREATE, { refetchQueries: [{ query: FETCH_CHATROOMS }] }
   );
 
   const sendNewMessage = async (userId, memberId) => {
     const data = await loadChatroomWithMessages({ variables: { userId: Number(userId), memberId: Number(memberId) } })
-
-    console.log(data);
-
     const chatroom = data.data.getConversationByUserIdsOrCreate
-    console.log(chatroom)
     navigate(`/chat/${chatroom.id}`)
   }
 
   let previousChar = '';
-  const usersList = chatUsers?.filter(u => Number(u.id) !== Number(user.id))
+  const usersList = chatUsers?.filter(c => c.username.toLowerCase()?.includes(searchKeyword.toLowerCase()))?.filter(u => Number(u.id) !== Number(user.id))
     ?.slice()
     .sort((a, b) => a.username.localeCompare(b.username))
     ?.map((u, i) => {
-      const param = uuidv4().concat(u.id);
       const isActive = activeUsers?.find(au => Number(au.id) === Number(u.id))
 
       if (u.username.charAt(0) !== previousChar) {

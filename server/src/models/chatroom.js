@@ -37,6 +37,9 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         unique: true,
       },
+      slug: {
+        type: DataTypes.VIRTUAL,
+      },
       type: {
         type: DataTypes.ENUM("ONE_TO_ONE", "MANY_TO_MANY"),
         defaultValue: "ONE_TO_ONE",
@@ -45,6 +48,13 @@ module.exports = (sequelize, DataTypes) => {
       creator_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+      },
+      messagesCount: {
+        type: DataTypes.VIRTUAL,
+      },
+      hasMore: {
+        type: DataTypes.VIRTUAL,
+        defaultValue: true,
       },
       last_message: {
         type: DataTypes.STRING,

@@ -15,6 +15,7 @@ import {
   resetContext,
   setActiveUsers,
   setChatrooms,
+  setSeachKeyword,
   setChatUsers,
   setCurrentChatroom,
   setLastMessage,
@@ -31,6 +32,7 @@ let CHAT_INITIAL_STATE = {
   messages: [],
   chatUsers: [],
   activeUsers: [],
+  searchKeyword: "",
 };
 
 const accessToken = localStorage.getItem("access_token");
@@ -48,6 +50,7 @@ if (accessToken) {
     messages: [],
     chatUsers: [],
     activeUsers: [],
+    searchKeyword: "",
   };
 }
 
@@ -81,8 +84,11 @@ export default function ChatProvider(props) {
   const resetContextHandler = () => {
     dispatchChat(resetContext());
   };
-  const setLastMessageHanldler = (message) => {
+  const setLastMessageHandler = (message) => {
     dispatchChat(setLastMessage(message));
+  };
+  const setSeachKeywordHandler = (message) => {
+    dispatchChat(setSeachKeyword(message));
   };
   return (
     <chatContext.Provider
@@ -98,7 +104,8 @@ export default function ChatProvider(props) {
         setActiveUsersHandler: setActiveUsersHandler,
         addActiveUserHandler: addActiveUserHandler,
         resetContextHandler: resetContextHandler,
-        setLastMessageHanldler:setLastMessageHanldler
+        setLastMessageHandler: setLastMessageHandler,
+        setSeachKeywordHandler: setSeachKeywordHandler,
       }}
     >
       {props.children}

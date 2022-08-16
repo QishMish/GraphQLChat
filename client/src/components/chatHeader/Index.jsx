@@ -18,7 +18,7 @@ const ChatHeader = () => {
   const { chatState: { currentChatroom } } = useChatContext()
   const { userState: { user } } = useAuthContext()
 
-  const slug = currentChatroom?.type === "MANY_TO_MANY" ? currentChatroom.name : currentChatroom?.users?.find(u => Number(u.id) !== Number(user.id))?.username
+  // const slug = currentChatroom?.type === "MANY_TO_MANY" ? currentChatroom.name : currentChatroom?.users?.find(u => Number(u.id) !== Number(user.id))?.username
 
 
   return (
@@ -29,7 +29,7 @@ const ChatHeader = () => {
             <img className={styles.icon} src="https://cdn-icons-png.flaticon.com/512/147/147142.png" alt="avatar" />
           </div>
           <h3 className={styles.username}>
-            {slug}
+            {currentChatroom.slug}
           </h3>
         </div>
         <div className={styles.right}>

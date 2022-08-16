@@ -5,6 +5,7 @@ import {
   RESET_CONTEXT,
   SET_ACTIVE_USERS,
   SET_CHATROOMS,
+  SET_SEARCH_KEYWORD,
   SET_CHAT_USERS,
   SET_CURRENT_CHATROOM,
   SET_LAST_MESSAGE,
@@ -69,5 +70,11 @@ export const setLastMessage = ({ chatroomId, lastMessage }) => {
   return {
     type: SET_LAST_MESSAGE,
     payload: { chatroomId, lastMessage },
+  };
+};
+export const setSeachKeyword = (input) => {
+  return {
+    type: SET_SEARCH_KEYWORD,
+    payload: input,
   };
 };

@@ -8,7 +8,7 @@ import Message from '../message/Index';
 
 const ChatBody = () => {
 
-  const { chatState: { messages }, setMessagesHandler, setLastMessageHanldler, deletedMessageHandler, addMessagesHandler, setCurrentChatroomHandler } = useChatContext()
+  const { chatState: { messages }, setMessagesHandler, setLastMessageHandler, deletedMessageHandler, addMessagesHandler, setCurrentChatroomHandler } = useChatContext()
   const { userState: { user } } = useAuthContext()
   const { chatroomId } = useParams();
 
@@ -58,7 +58,7 @@ const ChatBody = () => {
       },
       onSubscriptionData: (data) => {
         addMessagesHandler(data.subscriptionData.data.onNewMessageCreated);
-        setLastMessageHanldler({
+        setLastMessageHandler({
           chatroomId,
           lastMessage: data.subscriptionData.data.onNewMessageCreated.content
         })
