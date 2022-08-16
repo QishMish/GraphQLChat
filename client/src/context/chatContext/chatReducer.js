@@ -9,6 +9,7 @@ import {
   ADD_ACTIVE_USER,
   RESET_CONTEXT,
   SET_LAST_MESSAGE,
+  SET_SEARCH_KEYWORD,
 } from "./chatConstants";
 
 export const chatReducer = (state, action) => {
@@ -43,7 +44,6 @@ export const chatReducer = (state, action) => {
         currentChatroom: action.payload,
       };
     case HANDLE_DELETED_MESSAGE:
-      console.log(action.payload)
       const newMessages = state.messages.map((msg) => {
         if (Number(msg.id) === Number(action.payload.id)) {
           return {
@@ -101,6 +101,11 @@ export const chatReducer = (state, action) => {
           ...state.currentChatroom,
           last_message: action.payload.lastMessage,
         },
+      };
+    case SET_SEARCH_KEYWORD:
+      return {
+        ...state,
+        searchKeyword: action.payload,
       };
     default:
       return state;

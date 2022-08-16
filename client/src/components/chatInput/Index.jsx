@@ -16,7 +16,7 @@ const ChatInput = () => {
 
   const { chatroomId } = useParams()
 
-  const { setLastMessageHanldler } = useChatContext()
+  const { setLastMessageHandler } = useChatContext()
 
   const [message, setMessage] = useState("")
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
@@ -42,7 +42,7 @@ const ChatInput = () => {
       setIsOpenEmoji(false);
       sendMessage(message)
       setMessage("")
-      setLastMessageHanldler({
+      setLastMessageHandler({
         chatroomId,
         lastMessage: message
       })

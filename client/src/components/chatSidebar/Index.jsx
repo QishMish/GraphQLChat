@@ -20,7 +20,7 @@ const ChatSidebar = () => {
 	const [chatroomName, setChatroomName] = useState("")
 	const [selectedUsers, setSelectedUsers] = useState([])
 
-	const { setChatroomsHandler, setChatUsersHandler, chatState: { chatrooms, chatUsers } } = useChatContext()
+	const { setChatroomsHandler, setChatUsersHandler, setSeachKeywordHandler, chatState: { chatrooms, chatUsers, searchKeyword } } = useChatContext()
 	const { userState: { user } } = useAuthContext()
 
 	const [loadChatrooms, { _, loading: loadChatroomsLoading, data: loadChatroomsData }] = useLazyQuery(FETCH_CHATROOMS, {
@@ -55,6 +55,10 @@ const ChatSidebar = () => {
 	useEffect(() => {
 		loadChatrooms()
 	}, [])
+	useEffect(() => {
+		setSeachKeywordHandler("")
+	}, [])
+
 
 	const selectUserHandler = (e) => {
 		const id = e.target.id
@@ -92,7 +96,6 @@ const ChatSidebar = () => {
 		setChatroomName("")
 		setAddChatRoomModalIsOpen(false)
 	}
-
 	return (
 		<>
 			<div className={styles.chatroomGroup}>
@@ -138,12 +141,11 @@ const ChatSidebar = () => {
 					<div className={styles.conversations}>
 						{
 							chatrooms?.filter(c => {
-								console.log(c.type === "ONE_TO_ONE" && c.last_message == null);
 								if (c.type === "ONE_TO_ONE" && c.last_message == null) {
 									return false
 								}
 								return true
-							})?.map((conversation, index) => {
+							})?.filter(c => c.slug.toLowerCase()?.includes(searchKeyword.toLowerCase()))?.map((conversation, index) => {
 								const conversationSlug = conversation.type === "MANY_TO_MANY" ? `Chatroom:${conversation.name}` : conversation.users.find(u => Number(u.id) !== user.id)?.username
 								return (
 									<Link to={conversation.id} className={styles.conversation} key={index}>

@@ -11,7 +11,7 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
         allowNull: true,
-        unique:true
+        unique: true,
       },
       type: {
         type: Sequelize.STRING,
@@ -20,7 +20,7 @@ module.exports = {
       },
       creator_id: {
         type: Sequelize.INTEGER,
-        allowNull:false
+        allowNull: false,
       },
       last_message: {
         type: Sequelize.STRING,

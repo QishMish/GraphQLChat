@@ -34,7 +34,6 @@ const Message = ({ message, position, index }) => {
     }
 
     const messageDeleteHandler = ({ id, authorId }) => {
-        console.log("message deleted", id);
         if (!Number(authorId) === Number(user.id)) {
             return
         }
@@ -45,7 +44,6 @@ const Message = ({ message, position, index }) => {
         })
         setOptionModalOpen(false)
     }
-    console.log(position.toString().includes("flexEnd"));
     return (
         <div className={position} key={index}>
             <div className={styles.col}>
