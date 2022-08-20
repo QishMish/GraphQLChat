@@ -169,10 +169,12 @@ const sendNewMessage = async (userId, chatroomId, newMessageInput) => {
     where: {
       id: message.id,
     },
-    include: {
-      model: User,
-      as: "author",
-    },
+    include: [
+      {
+        model: User,
+        as: "author",
+      }
+    ]
   });
 
   return messageWithAuthor;
