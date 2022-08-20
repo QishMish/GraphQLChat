@@ -33,7 +33,6 @@ const SignUp = () => {
     }
   });
 
-
   const { register, handleSubmit, errors } = useForm({
     defaultValues: {
       email: "",

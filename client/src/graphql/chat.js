@@ -9,6 +9,7 @@ export const FETCH_CHATROOMS = gql`
       slug
       creator_id
       last_message
+      last_message_sent
       users {
         username
         email

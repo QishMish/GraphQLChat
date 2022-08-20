@@ -78,6 +78,8 @@ const fetchChatrooms = async (userId) => {
         ? `Chatroom:${c.name}`
         : c.users?.find((u) => Number(u.id) !== user.id)?.username;
     c.setDataValue("slug", conversationSlug);
+    const lastMessageDate = c.messages[c.messages.length - 1]?.createdAt;
+    c.setDataValue("last_message_sent", lastMessageDate);
     c.save();
     return c;
   });
@@ -86,25 +88,19 @@ const fetchChatrooms = async (userId) => {
     response: chatroomsWithSlug,
   };
 };
-const fetchChatroomMessages = async (
-  userId,
-  chatroomId,
-  offSet = 0,
-  limit = undefined
-) => {
+const fetchChatroomMessages = async (userId, chatroomId, offSet, limit) => {
   // const user = await User.findOne({
   //   where: {
   //     id: userId,
   //   },
   // });
 
-  console.log(offSet, limit)
+  console.log("offset", offSet, "limit", limit);
 
   const deletedChatroom = await DeletedUserChatroom.findOne({
     user_id: userId,
     chatroom_id: chatroomId,
   });
-  console.log(chatroomId, "chatoomId");
 
   // let lastMessage = 0;
 
@@ -134,9 +130,10 @@ const fetchChatroomMessages = async (
         // },
         model: Message,
         as: "messages",
-        limit: limit,
         offset: offSet,
+        limit: limit,
         order: [["createdAt", "DESC"]],
+        // order: [["createdAt", "ASC"]],
 
         include: [
           {
@@ -152,16 +149,17 @@ const fetchChatroomMessages = async (
     ],
   });
 
-  if (offSet > chatRoom.messagesCount) {
-    chatRoom.hasMoreMessages = false;
-  }
-  chatRoom.hasMoreMessages = true;
+  offSet + limit > chatRoom.messagesCount
+    ? (chatRoom.hasMoreMessages = false)
+    : (chatRoom.hasMoreMessages = true);
 
   const conversationSlug =
     chatRoom.type === "MANY_TO_MANY"
       ? `Chatroom:${chatRoom.name}`
       : chatRoom.users?.find((u) => Number(u.id) !== userId)?.username;
   chatRoom.setDataValue("slug", conversationSlug);
+
+  console.log(offSet);
   return {
     status: "SUCCESS",
     response: chatRoom,

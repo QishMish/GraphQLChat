@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import ChatBody from '../chatBody/Index'
 import ChatHeader from '../chatHeader/Index'
 import ChatInput from '../chatInput/Index'
@@ -10,7 +10,7 @@ const Chat = () => {
 		<div className={styles.chatComponentContainer}>
 			<ChatHeader />
 			<ChatBody />
-			<ChatInput />
+			<ChatInput  />
 		</div>
 	)
 }

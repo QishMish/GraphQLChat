@@ -6,6 +6,7 @@ type ChatRoom {
   slug: String
   messages: [Message]
   messagesCount: Int
+  last_message_sent:String
   hasMoreMessages:Boolean
   users: [UserDto]
   last_message: String

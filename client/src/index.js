@@ -59,12 +59,28 @@ const splitLink = split(
   wsLink,
   authLink.concat(httpLink)
 );
+
 const client = new ApolloClient({
   link: splitLink,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          fetchChatroomMessages: {
+            keyArgs: false,
+            merge:true
+            // merge(existing = [], incoming) {
+            //   console.log(existing, incoming);
+            //   return [...existing.messages, ...incoming.messages];
+            // },
+          },
+        },
+      },
+    },
+  }),
 });
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>

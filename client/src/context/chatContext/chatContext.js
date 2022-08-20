@@ -20,6 +20,8 @@ import {
   setCurrentChatroom,
   setLastMessage,
   setMessages,
+  addCurrentChatroomMessages,
+  resetMessages,
 } from "./chatActions";
 import { SET_CHATROOMS, SET_MESSAGES } from "./chatConstants";
 import { chatReducer } from "./chatReducer";
@@ -90,6 +92,12 @@ export default function ChatProvider(props) {
   const setSeachKeywordHandler = (message) => {
     dispatchChat(setSeachKeyword(message));
   };
+  const addCurrentChatroomMessagesHandler = (messages) => {
+    dispatchChat(addCurrentChatroomMessages(messages));
+  };
+  const resetMessagesHandler = () => {
+    dispatchChat(resetMessages());
+  };
   return (
     <chatContext.Provider
       value={{
@@ -106,6 +114,8 @@ export default function ChatProvider(props) {
         resetContextHandler: resetContextHandler,
         setLastMessageHandler: setLastMessageHandler,
         setSeachKeywordHandler: setSeachKeywordHandler,
+        addCurrentChatroomMessagesHandler: addCurrentChatroomMessagesHandler,
+        resetMessagesHandler: resetMessagesHandler,
       }}
     >
       {props.children}
