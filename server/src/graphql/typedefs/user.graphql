@@ -25,7 +25,7 @@ type UserDto {
   email: String!
   username: String!
   roles: [Roles!]!
-  verified:Boolean!
-  isActive:Boolean!
-  profile_img:String!
+  verified: Boolean!
+  isActive: Boolean!
+  profile_img: String!
 }

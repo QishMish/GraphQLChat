@@ -1,22 +1,15 @@
+const { QueryTypes } = require("sequelize");
+const { UserInputError } = require("apollo-server");
 const {
   User,
   Chatroom,
-  UserChatroom,
   DeletedUserChatroom,
   Message,
   Sequelize,
-  sequelize
+  sequelize,
 } = require("../models");
-const { Op, where } = require("sequelize");
-const { getMethods } = require("../utils/helper");
-const {
-  UserInputError,
-  AuthenticationError,
-  ForbiddenError,
-  withFilter,
-  SyntaxError,
-  ValidationError,
-} = require("apollo-server");
+const { Op } = require("sequelize");
+
 const { ResourceNotFoundError } = require("../errors/ApiError");
 
 const fetchChatrooms = async (userId) => {
@@ -31,7 +24,6 @@ const fetchChatrooms = async (userId) => {
   const userChatroomIds = userChatrooms.map((c) => c.id);
 
   const exludeChatroomIds = deletedChatroom.map((c) => c.chatroom_id);
-
 
   const chatrooms = await Chatroom.findAll({
     where: {
@@ -56,66 +48,59 @@ const fetchChatrooms = async (userId) => {
       {
         model: User,
         as: "users",
-        // chatroom_id: 1,
       },
     ],
   });
 
+  const chatroomsWithSlug = chatrooms.map((c) => {
+    const conversationSlug =
+      c.type === "MANY_TO_MANY"
+        ? `Chatroom:${c.name}`
+        : c.users?.find((u) => Number(u.id) !== user.id)?.username;
+    const lastMessageDate = c.messages[c.messages.length - 1]?.createdAt;
+
+    c.setDataValue("slug", conversationSlug);
+    c.setDataValue("last_message_sent", lastMessageDate);
+
+    c.save();
+
+    return c;
+  });
   return {
     status: "SUCCESS",
-    response: chatrooms,
+    response: chatroomsWithSlug,
   };
 };
 const fetchChatroomMessages = async (userId, chatroomId, offSet, limit) => {
-  // const user = await User.findOne({
-  //   where: {
-  //     id: userId,
-  //   },
-  // });
+  console.log("offset", offSet, "limit", limit);
 
   const deletedChatroom = await DeletedUserChatroom.findOne({
     user_id: userId,
     chatroom_id: chatroomId,
   });
 
-  // let lastMessage = 0;
-
-  // if (deletedChatroom) {
-  //   lastMessage.last_message_id;
-  // }
-
   const chatRoom = await Chatroom.findOne({
     where: {
       id: chatroomId,
     },
-    // attributes: {
-      // include: [
-        // [
-        //   Sequelize.literal(`(SELECT COUNT(*) FROM messages AS msg
-        //     WHERE
-        //     msg.chatroom_id = ${chatroomId}
-        //  )`),
-        //   "messagesCount",
-        // ],
-        // [
-        //   Sequelize.literal(`(SELECT content FROM messages AS msg
-        //       WHERE
-        //       msg.chatroom_id = ${chatroomId} LIMIT 1
-        //    )`),
-        //   "lastMessage",
-        // ],
-      // ],
-    // },
+    attributes: {
+      include: [
+        [
+          Sequelize.literal(`(SELECT COUNT(*) FROM messages AS msg
+          WHERE
+          msg.chatroom_id = ${chatroomId}
+        )`),
+          "messagesCount",
+        ],
+      ],
+    },
     include: [
       {
-        // where: {
-        //   id: { [Op.gt]: lastMessage },
-        // },
         model: Message,
         as: "messages",
+        offset: offSet,
         limit: limit,
         order: [["createdAt", "DESC"]],
-
         include: [
           {
             model: User,
@@ -129,6 +114,18 @@ const fetchChatroomMessages = async (userId, chatroomId, offSet, limit) => {
       },
     ],
   });
+
+  offSet + limit > chatRoom.messagesCount
+    ? (chatRoom.hasMoreMessages = false)
+    : (chatRoom.hasMoreMessages = true);
+
+  const conversationSlug =
+    chatRoom.type === "MANY_TO_MANY"
+      ? `Chatroom:${chatRoom.name}`
+      : chatRoom.users?.find((u) => Number(u.id) !== userId)?.username;
+
+  chatRoom.setDataValue("slug", conversationSlug);
+
   return {
     status: "SUCCESS",
     response: chatRoom,
@@ -151,19 +148,22 @@ const fetchChatRoomUsers = async (chatroomId) => {
   };
 };
 const sendNewMessage = async (userId, chatroomId, newMessageInput) => {
-  const user = await User.findOne({
-    where: {
-      id: userId,
-    },
-  });
+  const user = await User.findByPk(userId);
 
   if (!user) throw new ResourceNotFoundError("User not found");
+
+  const chatroom = await Chatroom.findByPk(chatroomId);
+
+  if (!chatroom) throw new UserInputError("Chatroom not found");
 
   const message = await Message.create({
     content: newMessageInput.content,
     author_id: user.id,
     chatroom_id: chatroomId,
   });
+  chatroom.last_message = message.content;
+
+  await chatroom.save();
 
   const messageWithAuthor = await Message.findOne({
     where: {
@@ -213,11 +213,7 @@ const createChatroomGroup = async (userId, createChatroomGroupInput) => {
   if (members) {
     await Promise.all(
       members.map(async (m) => {
-        const user = await User.findOne({
-          where: {
-            id: m.id,
-          },
-        });
+        const user = await User.findByPk(m.id);
         await chatroomGroup.addUser(user);
       })
     );
@@ -292,11 +288,7 @@ const sendChatMessageFromAdministration = async (
   chatroomId,
   newMessageInput
 ) => {
-  const user = await User.findOne({
-    where: {
-      id: userId,
-    },
-  });
+  const user = await User.findByPk(userId);
 
   if (!user) throw new ResourceNotFoundError("User not found");
 
@@ -308,9 +300,7 @@ const sendChatMessageFromAdministration = async (
   return message;
 };
 const removeMessage = async (messageId) => {
-  const message = await Message.findOne({
-    id: messageId,
-  });
+  const message = await Message.findByPk(messageId);
 
   if (!message) throw new UserInputError("Incorrect message id");
 
@@ -322,11 +312,7 @@ const removeMessage = async (messageId) => {
   return message;
 };
 const deleteConversation = async (userId, chatroomId) => {
-  const user = await User.findOne({
-    where: {
-      id: userId,
-    },
-  });
+  const user = await User.findByPk(userId);
   const conversation = await Chatroom.findOne({
     where: {
       id: chatroomId,
@@ -361,6 +347,54 @@ const deleteConversation = async (userId, chatroomId) => {
     last_message_id: lastMessageId,
   });
 };
+const createChatroom = async (userId, memberId, type = "ONE_TO_ONE") => {
+  const users = await Promise.all(
+    [userId, memberId].map(async (id) => {
+      const user = await User.findByPk(id);
+      if (!user) throw new ResourceNotFoundError("User not found");
+      return user;
+    })
+  );
+  const chatroom = await Chatroom.create({
+    name: new Date().toISOString(),
+    type: type,
+    creator_id: userId,
+  });
+
+  await Promise.all(
+    users.map(async (u) => {
+      await chatroom.addUser(u);
+    })
+  );
+
+  return chatroom;
+};
+
+const getConversationByUserIdsOrCreate = async (userId, memberId) => {
+  const [chatroomExist, metadata] = await sequelize.query(
+    `
+    SELECT c.id, c.name FROM chatrooms AS c
+    INNER JOIN user_chatrooms u1 ON u1.chatroom_id = c.id AND u1.user_id = :userId
+    INNER JOIN user_chatrooms u2 ON u2.chatroom_id = c.id AND u2.user_id = :memberId
+    WHERE c.type = 'ONE_TO_ONE'
+    `,
+    {
+      replacements: { userId: Number(userId), memberId: Number(memberId) },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (chatroomExist) {
+    const chatroom = await fetchChatroomMessages(userId, chatroomExist.id);
+    return chatroom;
+  }
+
+  const chatroom = await createChatroom(userId, memberId);
+
+  const chatroomWithMessages = await fetchChatroomMessages(userId, chatroom.id);
+
+  return chatroomWithMessages;
+};
 
 module.exports = {
   fetchChatrooms,
@@ -375,4 +409,5 @@ module.exports = {
   removeMessage,
   fetchChatRoomUsers,
   deleteConversation,
+  getConversationByUserIdsOrCreate,
 };

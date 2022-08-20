@@ -89,6 +89,14 @@ const chatMutations = {
       message: `Successfully deleted chatroom ${chatroomId}`,
     };
   },
+  getConversationByUserIdsOrCreate: async (parent, args, ctx) => {
+    const { id: userId } = ctx.user;
+    const { memberId } = args;
+
+    const getConversationByUserIdsOrCreateResponse =
+      await chatService.getConversationByUserIdsOrCreate(userId, memberId);
+    return getConversationByUserIdsOrCreateResponse.response;
+  },
 };
 
 module.exports = { chatMutations };

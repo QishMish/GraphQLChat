@@ -1,69 +1,102 @@
-import React from 'react';
-import ChatSidebarHeader from '../chatSidebarHeader/Index';
-import { BiSearch } from 'react-icons/bi';
-import { HiStatusOnline } from 'react-icons/hi';
-import styles from './styles.module.css';
-import { v4 as uuidv4 } from 'uuid';
-import { Link } from 'react-router-dom';
-import { useQuery, useSubscription } from '@apollo/client';
-import { GET_USERS, SUBSUCRIBE_TO_NEW_USER_JOIN } from '../../graphql/chat';
-import { useState } from 'react';
-import { useAuthContext, useChatContext } from '../../context';
+import React, { useEffect } from "react";
+import { HiStatusOnline } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
+
+import {
+  FETCH_CHATROOMS,
+  GET_CONVERSATION_BY_USERID_OR_CREATE,
+  GET_USERS,
+} from "../../graphql/chat";
+import { useAuthContext, useChatContext } from "../../context";
+
+import styles from "./styles.module.css";
 
 const UsersBar = () => {
   const {
     userState: { user },
   } = useAuthContext();
   const {
-    chatState: { chatUsers, activeUsers },
+    chatState: { chatUsers, activeUsers, searchKeyword },
     setChatUsersHandler,
-    addActiveUserHandler
+    setSeachKeywordHandler,
   } = useChatContext();
+  const navigate = useNavigate();
 
   const { loading, error, data } = useQuery(GET_USERS, {
-    onCompleted: data => {
+    onCompleted: (data) => {
       const exludeLogedInUser = data.getUsers
         .slice()
-        .filter(u => Number(u.id) !== Number(user.id));
+        .filter((u) => Number(u.id) !== Number(user.id));
       setChatUsersHandler(exludeLogedInUser);
     },
-    onError: error => {
+    onError: (error) => {
       console.log(error);
     },
   });
 
-  let previousChar = '';
-  const usersList = chatUsers?.filter(u => Number(u.id) !== Number(user.id))
+  useEffect(() => {
+    setSeachKeywordHandler("");
+  }, []);
+
+  const [loadChatroomWithMessages, { _, __, ___ }] = useMutation(
+    GET_CONVERSATION_BY_USERID_OR_CREATE,
+    { refetchQueries: [{ query: FETCH_CHATROOMS }] }
+  );
+
+  const sendNewMessage = async (userId, memberId) => {
+    const data = await loadChatroomWithMessages({
+      variables: { userId: Number(userId), memberId: Number(memberId) },
+    });
+    const chatroom = data.data.getConversationByUserIdsOrCreate;
+    navigate(`/chat/${chatroom.id}`);
+  };
+
+  let previousChar = "";
+  const usersList = chatUsers
+    ?.filter((c) =>
+      c.username.toLowerCase()?.includes(searchKeyword.toLowerCase())
+    )
+    ?.filter((u) => Number(u.id) !== Number(user.id))
     ?.slice()
     .sort((a, b) => a.username.localeCompare(b.username))
     ?.map((u, i) => {
-      const param = uuidv4().concat(u.id);
-      const isActive = activeUsers?.find(au => Number(au.id) === Number(u.id))
+      const isActive = activeUsers?.find(
+        (au) => Number(au.id) === Number(u.id)
+      );
 
       if (u.username.charAt(0) !== previousChar) {
         previousChar = u.username.charAt(0);
         return (
-          <div key={i}>
+          <div key={i} onClick={() => sendNewMessage(user.id, u.id)}>
             <div>
-              <div className={styles.albhabet} key={'c' + u.id}>
+              <div className={styles.albhabet} key={"c" + u.id}>
                 {previousChar}
               </div>
             </div>
             <div className={styles.userList}>
               <div className={styles.username}>{u.username}</div>
-              {isActive && <div className={styles.status}>
-                <HiStatusOnline />
-              </div>}
+              {isActive && (
+                <div className={styles.status}>
+                  <HiStatusOnline />
+                </div>
+              )}
             </div>
           </div>
         );
       } else {
         return (
-          <div className={styles.userList} key={i}>
+          <div
+            className={styles.userList}
+            key={i}
+            onClick={() => sendNewMessage(user.id, u.id)}
+          >
             <div className={styles.username}>{u.username}</div>
-            {isActive && <div className={styles.status}>
-              <HiStatusOnline />
-            </div>}
+            {isActive && (
+              <div className={styles.status}>
+                <HiStatusOnline />
+              </div>
+            )}
           </div>
         );
       }

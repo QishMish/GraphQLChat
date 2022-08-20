@@ -1,13 +1,6 @@
-import { useSubscription } from "@apollo/client";
-import React, {
-  useContext,
-  createContext,
-  useState,
-  useEffect,
-  useReducer,
-} from "react";
-import { SUBSUCRIBE_TO_NEW_USER_JOIN } from "../../graphql/chat";
+import React, { useContext, createContext, useReducer } from "react";
 import jwtDecode from "jwt-decode";
+
 import {
   addActiveUser,
   addMessage,
@@ -15,11 +8,14 @@ import {
   resetContext,
   setActiveUsers,
   setChatrooms,
+  setSeachKeyword,
   setChatUsers,
   setCurrentChatroom,
+  setLastMessage,
   setMessages,
+  addCurrentChatroomMessages,
+  resetMessages,
 } from "./chatActions";
-import { SET_CHATROOMS, SET_MESSAGES } from "./chatConstants";
 import { chatReducer } from "./chatReducer";
 
 const chatContext = createContext();
@@ -30,6 +26,7 @@ let CHAT_INITIAL_STATE = {
   messages: [],
   chatUsers: [],
   activeUsers: [],
+  searchKeyword: "",
 };
 
 const accessToken = localStorage.getItem("access_token");
@@ -47,6 +44,7 @@ if (accessToken) {
     messages: [],
     chatUsers: [],
     activeUsers: [],
+    searchKeyword: "",
   };
 }
 
@@ -80,6 +78,18 @@ export default function ChatProvider(props) {
   const resetContextHandler = () => {
     dispatchChat(resetContext());
   };
+  const setLastMessageHandler = (message) => {
+    dispatchChat(setLastMessage(message));
+  };
+  const setSeachKeywordHandler = (message) => {
+    dispatchChat(setSeachKeyword(message));
+  };
+  const addCurrentChatroomMessagesHandler = (messages) => {
+    dispatchChat(addCurrentChatroomMessages(messages));
+  };
+  const resetMessagesHandler = () => {
+    dispatchChat(resetMessages());
+  };
   return (
     <chatContext.Provider
       value={{
@@ -94,6 +104,10 @@ export default function ChatProvider(props) {
         setActiveUsersHandler: setActiveUsersHandler,
         addActiveUserHandler: addActiveUserHandler,
         resetContextHandler: resetContextHandler,
+        setLastMessageHandler: setLastMessageHandler,
+        setSeachKeywordHandler: setSeachKeywordHandler,
+        addCurrentChatroomMessagesHandler: addCurrentChatroomMessagesHandler,
+        resetMessagesHandler: resetMessagesHandler,
       }}
     >
       {props.children}

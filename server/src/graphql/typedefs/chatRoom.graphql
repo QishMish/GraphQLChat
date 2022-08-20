@@ -3,10 +3,13 @@ type ChatRoom {
   name: String!
   type: ChatRoomTypes!
   creator_id: ID!
+  slug: String
   messages: [Message]
-  # messagesCount: ID
+  messagesCount: Int
+  last_message_sent: String
+  hasMoreMessages: Boolean
   users: [UserDto]
-  lastMessage: String
+  last_message: String
   creator: UserDto!
 }
 

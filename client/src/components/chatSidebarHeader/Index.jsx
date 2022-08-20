@@ -1,19 +1,18 @@
-import React from 'react';
-import { useAuthContext } from '../../context';
+import React from "react";
 
-import styles from './styles.module.css';
+import { useAuthContext } from "../../context";
+
+import styles from "./styles.module.css";
 
 const ChatSidebarHeader = () => {
-  const {
-    userState
-  } = useAuthContext();
+  const { userState } = useAuthContext();
   return (
     <div className={styles.chatSidebarHeader}>
       <img
-        width={'25px'}
+        width={"25px"}
         className={styles.avatar}
-        src='https://cdn-icons-png.flaticon.com/512/147/147142.png'
-        alt='avatar'
+        src="https://cdn-icons-png.flaticon.com/512/147/147142.png"
+        alt="avatar"
       />
       <div className={styles.content}>
         <h2>{userState.user.username}</h2>

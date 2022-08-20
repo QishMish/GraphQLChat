@@ -6,7 +6,10 @@ export const FETCH_CHATROOMS = gql`
       id
       name
       type
+      slug
       creator_id
+      last_message
+      last_message_sent
       users {
         username
         email
@@ -18,12 +21,20 @@ export const FETCH_CHATROOMS = gql`
 `;
 
 export const FETCH_CHATROOM_MESSAGES = gql`
-  query FetchChatroomMessages($chatroomId: ID!) {
-    fetchChatroomMessages(chatroomId: $chatroomId) {
+  query FetchChatroomMessages($chatroomId: ID!, $offSet: Int, $limit: Int) {
+    fetchChatroomMessages(
+      chatroomId: $chatroomId
+      offSet: $offSet
+      limit: $limit
+    ) {
       id
       name
       type
       creator_id
+      last_message
+      slug
+      hasMoreMessages
+      messagesCount
       users {
         id
         username
@@ -150,6 +161,35 @@ export const FETCH_ACTIVE_USERS = gql`
     fetchActiveUsers {
       id
       username
+    }
+  }
+`;
+export const GET_CONVERSATION_BY_USERID_OR_CREATE = gql`
+  mutation GetConversationByUserIdsOrCreate($userId: ID!, $memberId: ID!) {
+    getConversationByUserIdsOrCreate(userId: $userId, memberId: $memberId) {
+      id
+      name
+      type
+      creator_id
+      users {
+        id
+        username
+        profile_img
+      }
+      messages {
+        id
+        content
+        createdAt
+        author {
+          id
+          email
+          username
+          verified
+          profile_img
+          isActive
+        }
+        chatroom_id
+      }
     }
   }
 `;

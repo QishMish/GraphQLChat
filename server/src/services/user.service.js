@@ -161,7 +161,7 @@ const disconnectUser = async (user) => {
 };
 const getActiveUsers = async (userId) => {
   redisActiveUsers = JSON.parse(await client.get("activeUsers"));
-  return redisActiveUsers.filter((u => Number(u.id) !== Number(userId)));
+  return redisActiveUsers.filter((u) => Number(u.id) !== Number(userId));
 };
 
 module.exports = {

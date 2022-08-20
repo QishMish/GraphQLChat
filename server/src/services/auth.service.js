@@ -1,23 +1,12 @@
-const {
-  UserInputError,
-  AuthenticationError,
-  ForbiddenError,
-  withFilter,
-  SyntaxError,
-  ValidationError,
-} = require("apollo-server");
+const { ForbiddenError, ValidationError } = require("apollo-server");
+
 const { signJwt, verifyJwt } = require("../utils/jwt");
 const { User, Role, RefreshToken } = require("../models");
 const {
   JWT_ACCESS_TOKEN_KEY,
   JWT_REFRESH_TOKEN_KEY,
-  JWT_ACCESS_TOKEN_EXPIRES_IN,
-  JWT_REFRESH_TOKEN_EXPIRES_IN,
 } = require("../config/constants");
-const { getMethods } = require("../utils/helper");
-
 const { ResourceNotFoundError } = require("../errors/ApiError");
-const { setUserActive } = require("./user.service");
 
 const signUp = async (email, username, firstname, lastname, password) => {
   const user = await User.create({
@@ -44,11 +33,6 @@ const signUp = async (email, username, firstname, lastname, password) => {
   });
 
   await user.addRefreshToken(refreshToken);
-
-  // await setUserActive({
-  //   id: user.id,
-  //   username: user.username,
-  // });
 
   return {
     status: "SUCCESS",
@@ -90,11 +74,6 @@ const signIn = async (username, password) => {
   });
 
   await user.addRefreshToken(refreshToken);
-
-  // await setUserActive({
-  //   id: user.id,
-  //   username: user.username,
-  // });
 
   return {
     status: "SUCCESS",
@@ -173,8 +152,8 @@ const refreshAccessToken = async (refreshToken) => {
 };
 const signTokens = async (user) => {
   const roles = user.roles ? user.roles.map((role) => role.role) : ["USER"];
-  // Create access token
 
+  // Create access token
   const access_token = await signJwt(
     {
       id: user.id,

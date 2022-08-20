@@ -1,16 +1,16 @@
 const { ApolloServer } = require("apollo-server-express");
-const schema = require("./schema");
-const { NODE_ENV } = require("../config/constants");
-const { authMiddleware } = require("../middlewares/auth.middleware");
+const { WebSocketServer } = require("ws");
 const {
   ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageLocalDefault,
 } = require("apollo-server-core");
-const { WebSocketServer } = require("ws");
 const { useServer } = require("graphql-ws/lib/use/ws");
 const { createServer } = require("http");
 const express = require("express");
+
 const { PubSub } = require("graphql-subscriptions");
+const schema = require("./schema");
+const { authMiddleware } = require("../middlewares/auth.middleware");
 const { disconnectUser, setUserActive } = require("../services/user.service");
 const { findUser } = require("../utils/jwt");
 const { client } = require("../config/redisConfig");
@@ -65,16 +65,21 @@ const serverCleanup = useServer(
       const user = await findUser(
         ctx.connectionParams.access_token.split("Bearer ")[1]
       );
+
       if (!user) throw new Error("Auth token missing!");
+
       await setUserActive({
         id: user.id,
         username: user.username,
       });
+
       const activeUsers = JSON.parse(await client.get("activeUsers"));
+
       pubsub.publish("ACTIVE_USERS", {
         activeUsers: activeUsers,
       });
-      console.log("Connected");
+
+      console.log("User connected");
     },
     onDisconnect: async (ctx, code, reason) => {
       if (!ctx.connectionParams.access_token) {
@@ -83,18 +88,21 @@ const serverCleanup = useServer(
       const user = await findUser(
         ctx.connectionParams.access_token.split("Bearer ")[1]
       );
+
       if (!user) throw new Error("Auth token missing!");
+
       await disconnectUser({
         id: user.id,
         username: user.username,
       });
-      
+
       const activeUsers = JSON.parse(await client.get("activeUsers"));
 
       pubsub.publish("ACTIVE_USERS", {
         activeUsers: activeUsers,
       });
-      console.log("Disconnected!");
+
+      console.log("User disconnected!");
     },
   },
   wsServer

@@ -1,4 +1,5 @@
 const chatService = require("../../../services/chat.service");
+const { getOffSet } = require("../../../utils/helper");
 
 const chatQueries = {
   fetchChatrooms: async (parent, args, ctx) => {
@@ -9,11 +10,16 @@ const chatQueries = {
   fetchChatroomMessages: async (parent, args, ctx) => {
     const { id: userId } = ctx.user;
     const { chatroomId, offSet, limit } = args;
+    const { offset: properOffSet, limit: properOffSetLimit } = getOffSet(
+      offSet,
+      limit
+    );
+
     const usersResponse = await chatService.fetchChatroomMessages(
       userId,
       chatroomId,
-      offSet,
-      limit
+      properOffSet,
+      properOffSetLimit
     );
     return usersResponse.response;
   },
