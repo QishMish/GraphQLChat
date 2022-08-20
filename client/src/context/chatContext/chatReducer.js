@@ -27,14 +27,23 @@ export const chatReducer = (state, action) => {
         messages: action.payload.messages,
       };
     case ADD_MESSAGE:
-      return {
-        ...state,
-        messages: state.messages.concat(action.payload),
-        currentChatroom: {
-          ...state.currentChatroom,
-          messages: [action.payload, ...state.currentChatroom.messages],
-        },
-      };
+      const openedChatroom =
+        Number(state.currentChatroom.id) === Number(action.payload.chatroom_id);
+        // console.log(action.payload.chatroom_id)
+        // console.log(state.currentChatroom.id)
+        console.log(openedChatroom)
+      if (openedChatroom) {
+        return {
+          ...state,
+          messages: state.messages.concat(action.payload),
+          currentChatroom: {
+            ...state.currentChatroom,
+            lastMessage:action.payload,
+            messages: [action.payload, ...state.currentChatroom.messages],
+          },
+        };
+      }
+      return state;
     case RESET_MESSAGES:
       return {
         ...state,
