@@ -2,21 +2,11 @@ interface IAuthResponse {
   status: Status!
   access_token:String!
   refresh_token:String
-  # response:{
-  #   data:{
-  #     token:String!
-  #   }
-  # }
 }
 type AuthResponse implements IAuthResponse {
   status: Status!
   access_token:String!
   refresh_token:String
-  # response:{
-  # data:{
-  #   token:String!
-  #   }
-  # }
 }
 
 type GenericResponse {

@@ -1,72 +1,70 @@
-
-
-.col{
-    display: flex;
-    gap: 10px;
-    padding: 0 45px;
+.col {
+  display: flex;
+  gap: 10px;
+  padding: 0 45px;
 }
-.left{
-    display: flex;
-    align-items: center;
+.left {
+  display: flex;
+  align-items: center;
 }
-.avatar{
-    width: 30px;
-    height: 30px;
+.avatar {
+  width: 30px;
+  height: 30px;
 }
-.right{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* align-items: center; */
-    padding: 2px;
-    max-width: 300px;
-    position: relative;
+.right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
+  padding: 2px;
+  max-width: 300px;
+  position: relative;
 }
-.options{
-    position: absolute;
-    right: -40px;
-    cursor: pointer;
-    color: #10182B;
-    opacity: 0;
+.options {
+  position: absolute;
+  right: -40px;
+  cursor: pointer;
+  color: #10182b;
+  opacity: 0;
 }
-.options:hover{
-    opacity: 1;
-    color: #10182B;
+.options:hover {
+  opacity: 1;
+  color: #10182b;
 }
-.optionProps{
-    color: #FE5366;
-    text-transform: capitalize;
-    font-size: 12px;
-    position: absolute;
-    right: -65%;
-    bottom: -7px;
-    cursor: pointer;
-    z-index: 1;
+.optionProps {
+  color: #fe5366;
+  text-transform: capitalize;
+  font-size: 12px;
+  position: absolute;
+  right: -65%;
+  bottom: -7px;
+  cursor: pointer;
+  z-index: 1;
 }
-.optionIcon{
-    margin-left: 5px;
+.optionIcon {
+  margin-left: 5px;
 }
-.none{
-    display: none;
+.none {
+  display: none;
 }
-.content{
-    background-color: #ffffff;
-    padding: 12px;
-    border-radius: 15px;
-    min-width: 70px;
-    color: #10182B;
-    line-height: 22px;
+.content {
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: 15px;
+  min-width: 70px;
+  color: #10182b;
+  line-height: 22px;
 }
-.content:hover  +.options{
-    opacity: 1;
-    color: #10182B;
+.content:hover + .options {
+  opacity: 1;
+  color: #10182b;
 }
-.time{
-    /* display: flex;
+.time {
+  /* display: flex;
     justify-content: end; */
-    position: absolute;
-    right: 5px;
-    bottom: -12px;
-    font-size: 11px;
-    color: #10182B;
+  position: absolute;
+  right: 5px;
+  bottom: -12px;
+  font-size: 11px;
+  color: #10182b;
 }

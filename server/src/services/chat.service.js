@@ -1,23 +1,15 @@
+const { QueryTypes } = require("sequelize");
+const { UserInputError } = require("apollo-server");
 const {
   User,
   Chatroom,
-  UserChatroom,
   DeletedUserChatroom,
   Message,
   Sequelize,
   sequelize,
 } = require("../models");
-const { QueryTypes } = require("sequelize");
-const { Op, where } = require("sequelize");
-const { getMethods } = require("../utils/helper");
-const {
-  UserInputError,
-  AuthenticationError,
-  ForbiddenError,
-  withFilter,
-  SyntaxError,
-  ValidationError,
-} = require("apollo-server");
+const { Op } = require("sequelize");
+
 const { ResourceNotFoundError } = require("../errors/ApiError");
 
 const fetchChatrooms = async (userId) => {
@@ -40,17 +32,6 @@ const fetchChatrooms = async (userId) => {
         [Op.in]: userChatroomIds,
       },
     },
-    attributes: {
-      include: [
-        // [
-        //   Sequelize.literal(`(SELECT COUNT(*) FROM messages AS msg
-        //   WHERE
-        //   msg.chatroom_id = ${chatroomId}
-        // )`),
-        //   "messagesCount",
-        // ],
-      ],
-    },
     include: [
       {
         model: User,
@@ -72,13 +53,17 @@ const fetchChatrooms = async (userId) => {
   });
 
   const chatroomsWithSlug = chatrooms.map((c) => {
-    console.log();
     const conversationSlug =
       c.type === "MANY_TO_MANY"
         ? `Chatroom:${c.name}`
         : c.users?.find((u) => Number(u.id) !== user.id)?.username;
+    const lastMessageDate = c.messages[c.messages.length - 1]?.createdAt;
+
     c.setDataValue("slug", conversationSlug);
+    c.setDataValue("last_message_sent", lastMessageDate);
+
     c.save();
+
     return c;
   });
   return {
@@ -86,31 +71,13 @@ const fetchChatrooms = async (userId) => {
     response: chatroomsWithSlug,
   };
 };
-const fetchChatroomMessages = async (
-  userId,
-  chatroomId,
-  offSet = 0,
-  limit = undefined
-) => {
-  // const user = await User.findOne({
-  //   where: {
-  //     id: userId,
-  //   },
-  // });
-
-  console.log(offSet, limit)
+const fetchChatroomMessages = async (userId, chatroomId, offSet, limit) => {
+  console.log("offset", offSet, "limit", limit);
 
   const deletedChatroom = await DeletedUserChatroom.findOne({
     user_id: userId,
     chatroom_id: chatroomId,
   });
-  console.log(chatroomId, "chatoomId");
-
-  // let lastMessage = 0;
-
-  // if (deletedChatroom) {
-  //   lastMessage.last_message_id;
-  // }
 
   const chatRoom = await Chatroom.findOne({
     where: {
@@ -129,15 +96,11 @@ const fetchChatroomMessages = async (
     },
     include: [
       {
-        // where: {
-        //   id: { [Op.gt]: lastMessage },
-        // },
         model: Message,
         as: "messages",
-        limit: limit,
         offset: offSet,
+        limit: limit,
         order: [["createdAt", "DESC"]],
-
         include: [
           {
             model: User,
@@ -152,16 +115,17 @@ const fetchChatroomMessages = async (
     ],
   });
 
-  if (offSet > chatRoom.messagesCount) {
-    chatRoom.hasMoreMessages = false;
-  }
-  chatRoom.hasMoreMessages = true;
+  offSet + limit > chatRoom.messagesCount
+    ? (chatRoom.hasMoreMessages = false)
+    : (chatRoom.hasMoreMessages = true);
 
   const conversationSlug =
     chatRoom.type === "MANY_TO_MANY"
       ? `Chatroom:${chatRoom.name}`
       : chatRoom.users?.find((u) => Number(u.id) !== userId)?.username;
+
   chatRoom.setDataValue("slug", conversationSlug);
+
   return {
     status: "SUCCESS",
     response: chatRoom,

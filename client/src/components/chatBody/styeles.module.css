@@ -2,16 +2,36 @@
   height: 100%;
   overflow-y: scroll;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   padding: 0 15px 0 0;
+  position: relative;
 }
 .message {
   display: flex;
   flex-direction: column;
   margin: 25px 0;
   width: 100%;
-  /* max-width: 580px; */
 }
 .flexEnd {
   align-items: flex-end;
+}
+.spinnerContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spinner {
+  width: 80px;
+  height: 80px;
+}
+.endMessage {
+  text-align: center;
+  color: #fe5366;
+}
+.startConversation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

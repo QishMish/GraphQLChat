@@ -60,6 +60,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         defaultValue: null,
       },
+      last_message_sent: {
+        type: DataTypes.VIRTUAL,
+      },
     },
     {
       sequelize,

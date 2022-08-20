@@ -10,6 +10,8 @@ import {
   SET_CURRENT_CHATROOM,
   SET_LAST_MESSAGE,
   SET_MESSAGES,
+  ADD_CURRENT_CHATROOM_MESSAGES,
+  RESET_MESSAGES,
 } from "./chatConstants";
 
 export const setChatrooms = (chatrooms) => {
@@ -76,5 +78,16 @@ export const setSeachKeyword = (input) => {
   return {
     type: SET_SEARCH_KEYWORD,
     payload: input,
+  };
+};
+export const addCurrentChatroomMessages = (messages) => {
+  return {
+    type: ADD_CURRENT_CHATROOM_MESSAGES,
+    payload: messages,
+  };
+};
+export const resetMessages = () => {
+  return {
+    type: RESET_MESSAGES,
   };
 };

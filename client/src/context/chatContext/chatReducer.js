@@ -10,6 +10,8 @@ import {
   RESET_CONTEXT,
   SET_LAST_MESSAGE,
   SET_SEARCH_KEYWORD,
+  ADD_CURRENT_CHATROOM_MESSAGES,
+  RESET_MESSAGES,
 } from "./chatConstants";
 
 export const chatReducer = (state, action) => {
@@ -22,16 +24,21 @@ export const chatReducer = (state, action) => {
     case SET_MESSAGES:
       return {
         ...state,
-        messages: action.payload,
+        messages: action.payload.messages,
       };
     case ADD_MESSAGE:
       return {
         ...state,
-        messages: [...state.messages, action.payload],
+        messages: state.messages.concat(action.payload),
         currentChatroom: {
           ...state.currentChatroom,
-          messages: [...state.currentChatroom.messages, action.payload],
+          messages: [action.payload, ...state.currentChatroom.messages],
         },
+      };
+    case RESET_MESSAGES:
+      return {
+        ...state,
+        messages: [],
       };
     case SET_CHAT_USERS:
       return {
@@ -43,8 +50,28 @@ export const chatReducer = (state, action) => {
         ...state,
         currentChatroom: action.payload,
       };
+    case ADD_CURRENT_CHATROOM_MESSAGES:
+      const existingChatroom =
+        Number(state.currentChatroom.id) === Number(action.payload.id);
+
+      if (existingChatroom) {
+        return {
+          ...state,
+          currentChatroom: {
+            ...state.currentChatroom,
+            hasMoreMessages: action.payload.hasMoreMessages,
+            messages: state.currentChatroom.messages.concat(
+              action.payload.messages
+            ),
+          },
+        };
+      }
+      return {
+        ...state,
+        currentChatroom: action.payload,
+      };
     case HANDLE_DELETED_MESSAGE:
-      const newMessages = state.messages.map((msg) => {
+      const newMessages = state.currentChatroom.messages.map((msg) => {
         if (Number(msg.id) === Number(action.payload.id)) {
           return {
             ...msg,
@@ -56,6 +83,10 @@ export const chatReducer = (state, action) => {
       return {
         ...state,
         messages: newMessages,
+        currentChatroom: {
+          ...state.currentChatroom,
+          messages: newMessages,
+        },
       };
     case SET_ACTIVE_USERS:
       return {

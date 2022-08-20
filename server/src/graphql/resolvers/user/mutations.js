@@ -20,7 +20,7 @@ const userMutation = {
 
     const { status, access_token, refresh_token, userProps } =
       await authService.signIn(username, password);
-      
+
     pubsub.publish("ACTIVE_USERS", {
       activeUsers: JSON.parse(await client.get("activeUsers")),
     });

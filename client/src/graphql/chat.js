@@ -9,6 +9,7 @@ export const FETCH_CHATROOMS = gql`
       slug
       creator_id
       last_message
+      last_message_sent
       users {
         username
         email
@@ -21,7 +22,11 @@ export const FETCH_CHATROOMS = gql`
 
 export const FETCH_CHATROOM_MESSAGES = gql`
   query FetchChatroomMessages($chatroomId: ID!, $offSet: Int, $limit: Int) {
-    fetchChatroomMessages(chatroomId: $chatroomId, offSet: $offSet, limit: $limit) {
+    fetchChatroomMessages(
+      chatroomId: $chatroomId
+      offSet: $offSet
+      limit: $limit
+    ) {
       id
       name
       type

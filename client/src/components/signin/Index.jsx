@@ -1,50 +1,41 @@
-import React, { useEffect } from "react";
-
-import { Link, useLocation, useNavigate } from "react-router-dom";
-
-import Loading from "../loading/Index";
-
-import { useAuthContext } from "../../context";
-
-import { SIGN_IN_USER } from '../../graphql/auth.js'
-
-import { useMutation } from '@apollo/client';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 
+import Loading from "../loading/Index";
+import { useAuthContext } from "../../context";
+import { SIGN_IN_USER } from "../../graphql/auth.js";
 
 import styles from "./styles.module.css";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { onSignIn } = useAuthContext()
+  const { onSignIn } = useAuthContext();
 
   const [signIn, { data, loading, error }] = useMutation(SIGN_IN_USER, {
     onCompleted: (data) => {
-      localStorage.setItem("access_token", data.signInUser.access_token)
-      localStorage.setItem("refresh_token", data.signInUser.refresh_token)
-      onSignIn(data.signInUser.access_token)
+      localStorage.setItem("access_token", data.signInUser.access_token);
+      localStorage.setItem("refresh_token", data.signInUser.refresh_token);
+      onSignIn(data.signInUser.access_token);
       navigate("/chat");
     },
-    onError: (error) => {
-      console.log(error);
-    }
   });
 
   const { register, handleSubmit, errors } = useForm({
     defaultValues: {
       username: "",
       password: "",
-    }
+    },
   });
 
   const signInHandler = async (data) => {
-    console.log(errors);
     await signIn({
       variables: {
-        signInUserInput: data
-      }
-    })
-  }
+        signInUserInput: data,
+      },
+    });
+  };
 
   return (
     <>
@@ -62,8 +53,10 @@ const SignIn = () => {
                   {...register("username", {
                     required: {
                       value: true,
-                      message: "Username is required"
-                    }, minLength: 3, maxLength: 30
+                      message: "Username is required",
+                    },
+                    minLength: 3,
+                    maxLength: 30,
                   })}
                 />
               </label>
@@ -76,8 +69,9 @@ const SignIn = () => {
                   {...register("password", {
                     required: {
                       value: true,
-                      message: "Password is required"
-                    }, minLength: 3
+                      message: "Password is required",
+                    },
+                    minLength: 3,
                   })}
                 />
               </label>
