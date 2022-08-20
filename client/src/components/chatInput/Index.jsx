@@ -1,54 +1,46 @@
-import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useMutation } from '@apollo/client'
-import Picker from 'emoji-picker-react';
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import Picker from "emoji-picker-react";
+import { BsEmojiSmile } from "react-icons/bs";
+import { AiOutlineSend } from "react-icons/ai";
+import { MdAttachFile } from "react-icons/md";
 
-import { BsEmojiSmile } from 'react-icons/bs'
-import { AiOutlineSend } from 'react-icons/ai'
-import { MdAttachFile } from 'react-icons/md'
+import { useChatContext } from "../../context";
+import { FETCH_CHATROOM_MESSAGES, SEND_NEW_MESSAGE } from "../../graphql/chat";
 
-import { FETCH_CHATROOM_MESSAGES, SEND_NEW_MESSAGE } from '../../graphql/chat'
-
-import styles from './styles.module.css'
-import { useChatContext } from '../../context';
+import styles from "./styles.module.css";
 
 const ChatInput = () => {
+  const { chatroomId } = useParams();
 
-  const { chatroomId } = useParams()
+  const { setLastMessageHandler } = useChatContext();
 
-  const { setLastMessageHandler } = useChatContext()
-
-  const [message, setMessage] = useState("")
+  const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
 
-  const [sendMessage, { data, loading, error }] = useMutation(SEND_NEW_MESSAGE, {
+  const [sendMessage] = useMutation(SEND_NEW_MESSAGE, {
     variables: {
       chatroomId: chatroomId,
       newMessageInput: {
-        content: message
-      }
+        content: message,
+      },
     },
-    onCompleted: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-    refetchQueries:FETCH_CHATROOM_MESSAGES
+    refetchQueries: FETCH_CHATROOM_MESSAGES,
   });
 
   const sendNewMessageHandler = () => {
     if (message) {
       setIsOpenEmoji(false);
-      sendMessage(message)
-      setMessage("")
+      sendMessage(message);
+      setMessage("");
       setLastMessageHandler({
         chatroomId,
-        lastMessage: message
-      })
+        lastMessage: message,
+      });
     }
-    return
-  }
+    return;
+  };
   const onEmojiClick = (event, emojiObject) => {
     setMessage((prev) => prev.concat(emojiObject.emoji));
   };
@@ -58,12 +50,16 @@ const ChatInput = () => {
       <div className={styles.leftControl}>
         <MdAttachFile className={styles.fileIcon} />
       </div>
-      <input type="text" placeholder='Type a message' className={styles.chatInput} value={message} onChange={(e) => setMessage(e.target.value)} />
+      <input
+        type="text"
+        placeholder="Type a message"
+        className={styles.chatInput}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
       <div className={styles.rightControl}>
-        <div
-          className={isOpenEmoji ? `${styles.show}` : `${styles.none}`}
-        >
-          <div className={styles.picker} >
+        <div className={isOpenEmoji ? `${styles.show}` : `${styles.none}`}>
+          <div className={styles.picker}>
             <Picker onEmojiClick={onEmojiClick} />
           </div>
         </div>
@@ -71,10 +67,13 @@ const ChatInput = () => {
           className={styles.emojiIcon}
           onClick={() => setIsOpenEmoji(!isOpenEmoji)}
         />
-        <AiOutlineSend className={styles.sendIcon} onClick={sendNewMessageHandler} />
+        <AiOutlineSend
+          className={styles.sendIcon}
+          onClick={sendNewMessageHandler}
+        />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ChatInput
+export default ChatInput;

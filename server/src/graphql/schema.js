@@ -1,9 +1,10 @@
+const { makeExecutableSchema } = require("@graphql-tools/schema");
 const { join } = require("path");
 const { readdirSync, readFileSync } = require("fs");
-const { makeExecutableSchema } = require("@graphql-tools/schema");
+const { applyMiddleware } = require("graphql-middleware");
+
 const resolvers = require("./resolvers");
 const { permissions } = require("./permissions");
-const { applyMiddleware } = require("graphql-middleware");
 
 const gqlFiles = readdirSync(join(__dirname, "./typedefs"));
 
@@ -20,7 +21,7 @@ const schema = applyMiddleware(
     typeDefs,
     resolvers,
   }),
-  // permissions
+  permissions
 );
 
 module.exports = schema;

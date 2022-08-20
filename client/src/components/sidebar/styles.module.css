@@ -1,31 +1,31 @@
-.sidebarContainer{
-    min-height: 100vh;
-    width: 70px;
-    background-color: #3BB1BC;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: column;
+.sidebarContainer {
+  min-height: 100vh;
+  width: 70px;
+  background-color: #3bb1bc;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
 }
-.logo{
-    font-size: 35px;
-    color: #102D5B;
-    cursor: pointer;
+.logo {
+  font-size: 35px;
+  color: #102d5b;
+  cursor: pointer;
 }
-.links{
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    font-size: 30px;
-    color: #102D5B;
-    cursor: pointer;
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  font-size: 30px;
+  color: #102d5b;
+  cursor: pointer;
 }
-.active{
-    color: #ffffff;
+.active {
+  color: #ffffff;
 }
-.signout{
-    font-size: 35px;
-    color: #102D5B;
-    cursor: pointer;
+.signout {
+  font-size: 35px;
+  color: #102d5b;
+  cursor: pointer;
 }

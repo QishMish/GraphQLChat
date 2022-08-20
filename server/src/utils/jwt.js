@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+
 const { JWT_ACCESS_TOKEN_KEY } = require("../config/constants");
 const { getUserById } = require("../services/user.service");
 
@@ -29,10 +30,9 @@ const hashPassword = async (password) => {
   return hashedPassword;
 };
 
-
 module.exports = {
   signJwt,
   verifyJwt,
   hashPassword,
-  findUser
+  findUser,
 };

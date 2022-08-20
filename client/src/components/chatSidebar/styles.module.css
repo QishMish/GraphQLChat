@@ -7,7 +7,6 @@
   flex-direction: column;
   padding: 0 20px 20px 20px;
 }
-
 .wrapper {
   display: flex;
   align-items: center;
@@ -16,7 +15,6 @@
   width: 100%;
   background-color: rebeccapurple !important;
 }
-
 .chatSidebarBody {
   background-color: #ffffff;
   border-radius: 40px;
@@ -26,14 +24,12 @@
   flex-direction: column;
   width: 100%;
 }
-
 .search {
   position: relative;
   width: 90%;
   max-width: 360px;
   padding: 30px 0;
 }
-
 .searchInput {
   border-radius: 20px;
   padding: 3px 2px;
@@ -41,7 +37,6 @@
   height: 50px;
   width: 100%;
 }
-
 .searchIcon {
   color: #102d5b;
   font-size: 20px;
@@ -51,7 +46,6 @@
   transform: translateY(-50%);
 }
 .chatroomGroup {
-  /* width: 90%; */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -117,7 +111,6 @@
   width: 90%;
   gap: 15px;
 }
-
 .conversation {
   max-width: 360px;
   width: 100%;
@@ -125,12 +118,10 @@
   padding: 2px 3px;
   cursor: pointer;
 }
-
 .avatar {
   width: 50px;
   height: 50px;
 }
-
 .left {
   flex: 1;
   display: flex;
@@ -139,7 +130,6 @@
   justify-content: center;
   width: 100%;
 }
-
 .center {
   flex: 2;
   display: flex;
@@ -149,25 +139,18 @@
   gap: 5px;
   max-width: 100%;
 }
-
 .center h4 {
   color: #102d5b;
   padding-right: 5px;
 }
 .users {
   display: flex;
-  /* max-width: 120px; */
   width: 100%;
   overflow-x: scroll;
 }
-.users h4 {
-  /* width: 100%; */
-}
-
 .center span {
   color: #102d5b;
 }
-
 .right {
   flex: 1;
   display: flex;
@@ -179,12 +162,10 @@
   position: relative;
   padding-right: 5px;
 }
-
 .lastMessageSentTime {
   color: #102d5b;
   font-size: 14px;
 }
-
 .unSeenMessages {
   color: #ffffff;
   background-color: #fe5366;

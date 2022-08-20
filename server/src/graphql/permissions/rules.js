@@ -5,7 +5,6 @@ const isAuthenticated = rule({ cache: "contextual" })(
     return ctx.user !== null;
   }
 );
-
 const isAdmin = rule({ cache: "contextual" })(
   async (parent, args, ctx, info) => {
     return ctx.user.roles.includes("ADMIN");

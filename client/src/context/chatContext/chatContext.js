@@ -1,13 +1,6 @@
-import { useSubscription } from "@apollo/client";
-import React, {
-  useContext,
-  createContext,
-  useState,
-  useEffect,
-  useReducer,
-} from "react";
-import { SUBSUCRIBE_TO_NEW_USER_JOIN } from "../../graphql/chat";
+import React, { useContext, createContext, useReducer } from "react";
 import jwtDecode from "jwt-decode";
+
 import {
   addActiveUser,
   addMessage,
@@ -23,7 +16,6 @@ import {
   addCurrentChatroomMessages,
   resetMessages,
 } from "./chatActions";
-import { SET_CHATROOMS, SET_MESSAGES } from "./chatConstants";
 import { chatReducer } from "./chatReducer";
 
 const chatContext = createContext();

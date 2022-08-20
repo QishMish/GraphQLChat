@@ -66,21 +66,6 @@ export const chatReducer = (state, action) => {
           },
         };
       }
-
-      // if (state.currentChatroom.messages) {
-      //   if (existingChatroom) {
-      //     return {
-      //       ...state,
-      //       currentChatroom: {
-      //         ...state.currentChatroom,
-      //         hasMoreMessages: action.payload.hasMoreMessages,
-      //         messages: state.currentChatroom.messages.concat(
-      //           action.payload.messages
-      //         ),
-      //       },
-      //     };
-      //   }
-      // }
       return {
         ...state,
         currentChatroom: action.payload,

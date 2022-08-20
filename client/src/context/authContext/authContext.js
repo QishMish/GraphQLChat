@@ -1,14 +1,13 @@
+import jwtDecode from "jwt-decode";
+
 import React, {
   useContext,
   createContext,
-  useState,
-  useEffect,
   useReducer,
 } from "react";
 import { authReducer } from "./authReducer";
-import jwtDecode from "jwt-decode";
 import { signIn, signOut, signUp } from "./authActions";
-import { SIGN_IN, SIGN_OUT, SIGN_UP } from "./authConstants";
+import { SIGN_OUT } from "./authConstants";
 
 const authContext = createContext();
 
@@ -34,9 +33,7 @@ export default function AuthProvider(props) {
   const onSignUp = (accessToken) => {
     if (accessToken) {
       const decoded = jwtDecode(accessToken);
-      dispatchUser(
-        signUp(decoded)
-      );
+      dispatchUser(signUp(decoded));
     }
   };
 

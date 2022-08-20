@@ -1,20 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
 import {
   ApolloClient,
   ApolloProvider,
   createHttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import AuthProvider from "./context/authContext/authContext";
 import { setContext } from "@apollo/client/link/context";
-import ChatProvider from "./context/chatContext/chatContext";
-import SidebarProvider from "./context/sidebarContext/sidebarContext";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { split } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
+
+import App from "./App";
+import ChatProvider from "./context/chatContext/chatContext";
+import AuthProvider from "./context/authContext/authContext";
+import SidebarProvider from "./context/sidebarContext/sidebarContext";
 
 const httpLink = createHttpLink({
   uri: "http://localhost:3001/graphql",
@@ -68,11 +69,7 @@ const client = new ApolloClient({
         fields: {
           fetchChatroomMessages: {
             keyArgs: false,
-            merge:true
-            // merge(existing = [], incoming) {
-            //   console.log(existing, incoming);
-            //   return [...existing.messages, ...incoming.messages];
-            // },
+            merge: true,
           },
         },
       },

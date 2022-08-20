@@ -1,10 +1,5 @@
-import React, {
-  useContext,
-  createContext,
-  useState,
-  useEffect,
-  useReducer,
-} from "react";
+import React, { useContext, createContext, useReducer } from "react";
+
 import { setSidebar } from "./sidebarActions";
 import { sidebarReducer } from "./sidebarReducer";
 
@@ -15,6 +10,7 @@ const SIDEBAR_INITIAL_STATE = {
 };
 
 export default function SidebarProvider(props) {
+  
   const [sidebarState, dispatchSidebar] = useReducer(
     sidebarReducer,
     SIDEBAR_INITIAL_STATE
