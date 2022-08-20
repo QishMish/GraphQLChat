@@ -88,6 +88,7 @@ export const SUBSCRIBE_TO_CHATROOM_NEW_MESSAGE_CREATION = gql`
     onNewMessageCreated(chatroomId: $chatroomId) {
       id
       content
+      chatroom_id
       author {
         id
         username
